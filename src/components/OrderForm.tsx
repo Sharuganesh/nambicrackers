@@ -182,7 +182,7 @@ export function OrderForm({ lines, totalQty, totalAmount, onClose, onSuccess }: 
             </p>
           )}
 
-          <div className="flex items-center justify-end gap-3 pb-2">
+          <div className="flex flex-wrap items-center justify-end gap-3 pb-2">
             <button
               type="button"
               onClick={onClose}

@@ -29,6 +29,9 @@ var HEADERS = [
 ];
 
 function doGet(e) {
+  if (e && e.parameter && e.parameter.action === 'list') {
+    return listOrders_();
+  }
   return handleRequest(e);
 }
 
@@ -112,6 +115,36 @@ function getSheet_() {
   }
 
   return sheet;
+}
+
+function listOrders_() {
+  try {
+    var sheet = getSheet_();
+    var lastRow = sheet.getLastRow();
+    if (lastRow < 2) return json_({ success: true, orders: [] });
+
+    var values = sheet.getRange(2, 1, lastRow - 1, HEADERS.length).getValues();
+    var orders = [];
+    for (var i = values.length - 1; i >= 0; i--) {
+      var r = values[i];
+      orders.push({
+        timestamp: r[0] ? Utilities.formatDate(new Date(r[0]), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a') : '',
+        name: String(r[1] || ''),
+        mobile: String(r[2] || ''),
+        email: String(r[3] || ''),
+        address: String(r[4] || ''),
+        district: String(r[5] || ''),
+        state: String(r[6] || ''),
+        pincode: String(r[7] || ''),
+        items: String(r[8] || ''),
+        totalQty: String(r[9] || ''),
+        totalAmount: String(r[10] || '')
+      });
+    }
+    return json_({ success: true, orders: orders });
+  } catch (err) {
+    return json_({ success: false, error: String(err) });
+  }
 }
 
 function json_(obj) {

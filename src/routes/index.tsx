@@ -4,6 +4,7 @@ import logo from "@/assets/nambi-logo.png.asset.json";
 import { CATEGORIES, ALL_PRODUCTS } from "@/data/products";
 import { SHOP } from "@/config";
 import { OrderForm, type OrderLine } from "@/components/OrderForm";
+import { categoryImage } from "@/data/category-images";
 
 export const Route = createFileRoute("/")({
   head: () => ({

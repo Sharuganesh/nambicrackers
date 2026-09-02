@@ -79,6 +79,47 @@ export function OrderForm({ lines, totalQty, totalAmount, onClose, onSuccess }: 
     }
   };
 
+  const orderOnWhatsApp = () => {
+    setError("");
+    if (!form.name.trim()) {
+      setError("Please enter your name before ordering on WhatsApp.");
+      return;
+    }
+    if (!/^\d{10}$/.test(form.mobile.trim())) {
+      setError("Please enter a valid 10 digit mobile number.");
+      return;
+    }
+    if (!/^\d{6}$/.test(form.pincode.trim())) {
+      setError("Please enter a valid 6 digit pincode.");
+      return;
+    }
+    const itemLines = lines
+      .map((l) => `- ${l.name} x ${l.qty} ${l.unit} = Rs.${l.qty * l.price}`)
+      .join("\n");
+    const msg = [
+      `New Order - ${SHOP.name}`,
+      "",
+      `Name: ${form.name}`,
+      `Mobile: ${form.mobile}`,
+      `Email: ${form.email}`,
+      `Address: ${form.address}`,
+      `District: ${form.district}`,
+      `State: ${form.state}`,
+      `Pincode: ${form.pincode}`,
+      "",
+      "Order Items:",
+      itemLines,
+      "",
+      `Total Qty: ${totalQty}`,
+      `Total Amount: Rs.${totalAmount}`,
+    ].join("\n");
+    window.open(
+      `https://wa.me/91${SHOP.phone}?text=${encodeURIComponent(msg)}`,
+      "_blank",
+      "noopener",
+    );
+  };
+
   const field = (
     label: string,
     key: keyof typeof EMPTY,
@@ -148,6 +189,13 @@ export function OrderForm({ lines, totalQty, totalAmount, onClose, onSuccess }: 
               className="rounded-md px-4 py-2.5 text-sm font-semibold text-muted-foreground"
             >
               Back
+            </button>
+            <button
+              type="button"
+              onClick={orderOnWhatsApp}
+              className="rounded-md bg-[#25D366] px-4 py-2.5 text-sm font-semibold text-white hover:brightness-95"
+            >
+              WhatsApp Order
             </button>
             <button
               type="submit"

@@ -104,7 +104,11 @@ function getSheet_() {
       .setFontWeight('bold')
       .setBackground('#f3e5c0');
     sheet.setFrozenRows(1);
-    sheet.setColumnWidth(9, 320); // Order Items column wide enough to read
+  }
+
+  // Keep the Order Items column readable (applies to existing tabs too)
+  if (sheet.getColumnWidth(9) < 200) {
+    sheet.setColumnWidth(9, 320);
   }
 
   return sheet;

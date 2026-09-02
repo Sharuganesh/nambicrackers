@@ -54,7 +54,7 @@ export function OrderForm({ lines, totalQty, totalAmount, onClose, onSuccess }: 
 
     const items = lines
       .map((l) => `${l.name} x ${l.qty} ${l.unit} = Rs.${l.qty * l.price}`)
-      .join(" | ");
+      .join("\n");
 
     const params = new URLSearchParams({
       ...form,

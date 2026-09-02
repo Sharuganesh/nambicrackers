@@ -55,6 +55,14 @@ function handleRequest(e) {
 
     var sheet = getSheet_();
 
+    // Normalise item separators so every product lands on its own line
+    // inside the cell (website may send " | " or newlines).
+    var items = String(params.items || '')
+      .split(/\s*\|\s*|\r?\n/)
+      .filter(function (s) { return s !== ''; })
+      .join(String.fromCharCode(10));
+
+    var row = sheet.getLastRow() + 1;
     sheet.appendRow([
       new Date(),
       params.name || '',

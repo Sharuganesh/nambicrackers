@@ -104,6 +104,7 @@ function getSheet_() {
       .setFontWeight('bold')
       .setBackground('#f3e5c0');
     sheet.setFrozenRows(1);
+    sheet.setColumnWidth(9, 320); // Order Items column wide enough to read
   }
 
   return sheet;

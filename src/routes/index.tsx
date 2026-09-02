@@ -36,7 +36,7 @@ function Index() {
       ALL_PRODUCTS.filter((p) => (qty[p.id] ?? 0) > 0).map((p) => ({
         id: p.id,
         name: p.name,
-        qty: qty[p.id],
+        qty: qty[p.id] ?? 0,
         price: p.price,
         unit: p.unit,
       })),

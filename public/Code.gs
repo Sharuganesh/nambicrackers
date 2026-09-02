@@ -72,10 +72,16 @@ function handleRequest(e) {
       params.district || '',
       params.state || '',
       params.pincode || '',
-      params.items || '',
+      items,
       params.totalQty || '',
       params.totalAmount || ''
     ]);
+
+    // Make the new row easy to read: wrap the items cell, top-align the row
+    var newRow = sheet.getRange(row, 1, 1, HEADERS.length);
+    newRow.setVerticalAlignment('top');
+    sheet.getRange(row, 9).setWrap(true);
+    sheet.setRowHeight(row, Math.max(21, items.split(String.fromCharCode(10)).length * 16));
 
     return json_({ success: true });
   } catch (err) {

@@ -4,7 +4,7 @@ import logo from "@/assets/nambi-logo.png.asset.json";
 import { CATEGORIES, ALL_PRODUCTS } from "@/data/products";
 import { SHOP } from "@/config";
 import { OrderForm, type OrderLine } from "@/components/OrderForm";
-import { categoryImage } from "@/data/category-images";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -122,16 +122,8 @@ function Index() {
       <main className="mx-auto max-w-5xl px-2 py-4 sm:px-4">
         {categories.map((cat) => (
           <section key={cat.name} className="mb-6">
-            <h3 className="cat-bar flex items-center gap-3 rounded-t-md px-3 py-2 text-sm font-bold sm:text-base">
-              <img
-                src={categoryImage(cat.name)}
-                alt={`${cat.name} crackers`}
-                loading="lazy"
-                width={512}
-                height={512}
-                className="h-10 w-10 shrink-0 rounded-full object-cover ring-2 ring-white/30 sm:h-12 sm:w-12"
-              />
-              <span className="flex-1 text-center">{cat.name}</span>
+            <h3 className="cat-bar rounded-t-md px-3 py-2 text-center text-sm font-bold sm:text-base">
+              {cat.name}
             </h3>
             <div className="overflow-hidden rounded-b-md border border-t-0 border-border bg-card">
               <table className="w-full border-collapse text-left text-sm">
@@ -150,20 +142,10 @@ function Index() {
                     return (
                       <tr key={p.id} className="border-t border-border align-middle">
                         <td className="px-2 py-2">
-                          <div className="flex items-center gap-2">
-                            <img
-                              src={categoryImage(cat.name)}
-                              alt={p.name}
-                              loading="lazy"
-                              width={512}
-                              height={512}
-                              className="h-10 w-10 shrink-0 rounded-md border border-border object-cover"
-                            />
-                            <div className="min-w-0">
-                              <div className="font-semibold leading-tight">{p.name}</div>
-                              <div className="text-xs text-muted-foreground">
-                                {p.tamil} &middot; {p.unit}
-                              </div>
+                          <div className="min-w-0">
+                            <div className="font-semibold leading-tight">{p.name}</div>
+                            <div className="text-xs text-muted-foreground">
+                              {p.tamil} &middot; {p.unit}
                             </div>
                           </div>
                         </td>

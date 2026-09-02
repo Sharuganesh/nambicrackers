@@ -122,8 +122,16 @@ function Index() {
       <main className="mx-auto max-w-5xl px-2 py-4 sm:px-4">
         {categories.map((cat) => (
           <section key={cat.name} className="mb-6">
-            <h3 className="cat-bar rounded-t-md px-3 py-2.5 text-center text-sm font-bold sm:text-base">
-              {cat.name}
+            <h3 className="cat-bar flex items-center gap-3 rounded-t-md px-3 py-2 text-sm font-bold sm:text-base">
+              <img
+                src={categoryImage(cat.name)}
+                alt={`${cat.name} crackers`}
+                loading="lazy"
+                width={512}
+                height={512}
+                className="h-10 w-10 shrink-0 rounded-full object-cover ring-2 ring-white/30 sm:h-12 sm:w-12"
+              />
+              <span className="flex-1 text-center">{cat.name}</span>
             </h3>
             <div className="overflow-hidden rounded-b-md border border-t-0 border-border bg-card">
               <table className="w-full border-collapse text-left text-sm">

@@ -3,7 +3,7 @@
  * (Deploy > New deployment > Web app > Anyone).
  */
 export const APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbznpuQm4Xg6fsSbieJn9mew3_KRRS9y74vUbBQ65ziZUVgUQ6J10nKCdKjXFpwLoSd2/exec";
+  "https://script.google.com/macros/s/AKfycbxE7gfIpy1uZGYsh3u11C32CgXkeAXVFX3qTi4NmLbwiHMKjUwnI8Z1DrtFnUkScPAj/exec";
 
 export const SHOP = {
   name: "Nambi Crackers",

@@ -1,25 +1,25 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import logo from "@/assets/nambi-logo.png.asset.json";
+import { CheckCircle2, ShoppingCart, Minus, Plus } from "lucide-react";
 import { CATEGORIES, ALL_PRODUCTS } from "@/data/products";
 import { SHOP } from "@/config";
-import { OrderForm, type OrderLine } from "@/components/OrderForm";
-
+import { Cart, type CartLine } from "@/components/Cart";
+import { downloadInvoice, type InvoiceData } from "@/lib/invoice";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Nambi Crackers Sivakasi | 80% Off Diwali Crackers Online Order" },
+      { title: "Nambi Crackers Sivakasi | 90% Off Diwali Crackers Price List 2026" },
       {
         name: "description",
         content:
-          "Order Sivakasi crackers online from Nambi Crackers at 80% discount. Full 2026 price list, safe packing and fast delivery across Tamil Nadu.",
+          "Order Sivakasi crackers online from Nambi Crackers at 90% discount. Full 2026 price list with photos, safe packing and fast delivery across Tamil Nadu.",
       },
-      { property: "og:title", content: "Nambi Crackers Sivakasi | 80% Off Price List 2026" },
+      { property: "og:title", content: "Nambi Crackers Sivakasi | 90% Off Price List 2026" },
       {
         property: "og:description",
         content:
-          "Direct-from-factory Sivakasi crackers at 80% off. Browse the full price list and place your order online.",
+          "Direct-from-factory Sivakasi crackers at 90% off. Browse the full price list and order online.",
       },
     ],
   }),
@@ -29,23 +29,17 @@ export const Route = createFileRoute("/")({
 function Index() {
   const [qty, setQty] = useState<Record<number, number>>({});
   const [query, setQuery] = useState("");
-  const [showForm, setShowForm] = useState(false);
-  const [done, setDone] = useState(false);
+  const [showCart, setShowCart] = useState(false);
+  const [done, setDone] = useState<InvoiceData | null>(null);
 
-  const lines: OrderLine[] = useMemo(
+  const lines: CartLine[] = useMemo(
     () =>
-      ALL_PRODUCTS.filter((p) => (qty[p.id] ?? 0) > 0).map((p) => ({
-        id: p.id,
-        name: p.name,
-        qty: qty[p.id] ?? 0,
-        price: p.price,
-        unit: p.unit,
-      })),
+      ALL_PRODUCTS.filter((p) => (qty[p.id] ?? 0) > 0).map((p) => ({ ...p, qty: qty[p.id] ?? 0 })),
     [qty],
   );
 
   const totalQty = lines.reduce((s, l) => s + l.qty, 0);
-  const totalAmount = lines.reduce((s, l) => s + l.qty * l.price, 0);
+  const netTotal = lines.reduce((s, l) => s + l.qty * l.price, 0);
 
   const q = query.trim().toLowerCase();
   const categories = q
@@ -60,26 +54,21 @@ function Index() {
   const setValue = (id: number, v: number) =>
     setQty((s) => ({ ...s, [id]: Number.isFinite(v) && v > 0 ? Math.floor(v) : 0 }));
 
-  const openForm = () => {
-    if (totalAmount < SHOP.minOrder) return;
-    setShowForm(true);
-  };
-
   return (
     <div className="min-h-screen pb-28">
       <header className="surface-royal sticky top-0 z-30 shadow-lg">
         <div className="mx-auto flex max-w-5xl items-center gap-3 px-3 py-2.5">
           <img
-            src={logo.url}
+            src="/logo.jpg"
             alt="Nambi Crackers logo"
-            className="h-11 w-11 shrink-0 rounded-full bg-ink/40 object-contain"
+            className="h-11 w-11 shrink-0 rounded-full object-contain"
             width={44}
             height={44}
           />
           <div className="min-w-0">
             <h1 className="truncate text-base font-bold sm:text-xl">Nambi Crackers</h1>
             <p className="truncate text-[11px] opacity-80 sm:text-xs">
-              Sivakasi &middot; 80% Discount Price List 2026
+              Sivakasi &middot; 90% Discount Price List 2026
             </p>
           </div>
           <a
@@ -94,16 +83,14 @@ function Index() {
       <section className="border-b border-border bg-secondary">
         <div className="mx-auto max-w-5xl px-4 py-7 text-center">
           <img
-            src={logo.url}
+            src="/logo.jpg"
             alt="Nambi Crackers Sivakasi"
-            className="mx-auto h-28 w-28 object-contain sm:h-36 sm:w-36"
+            className="mx-auto h-28 w-28 rounded-xl object-contain sm:h-36 sm:w-36"
           />
           <h2 className="mt-3 text-2xl font-bold text-primary sm:text-3xl">
-            Sivakasi Crackers at 80% Off
+            Sivakasi Crackers at 90% Off
           </h2>
-          <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
-            {SHOP.address}
-          </p>
+          <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">{SHOP.address}</p>
           <p className="mt-3 inline-block rounded-full bg-primary px-4 py-1.5 text-xs font-semibold text-primary-foreground">
             Minimum order Rs {SHOP.minOrder}
           </p>
@@ -125,54 +112,66 @@ function Index() {
             <h3 className="cat-bar rounded-t-md px-3 py-2 text-center text-sm font-bold sm:text-base">
               {cat.name}
             </h3>
+
             <div className="overflow-hidden rounded-b-md border border-t-0 border-border bg-card">
-              <table className="w-full border-collapse text-left text-sm">
-                <thead>
-                  <tr className="bg-muted text-xs uppercase tracking-wide text-muted-foreground">
-                    <th className="px-2 py-2">Product</th>
-                    <th className="px-1 py-2 text-right">Rate</th>
-                    <th className="px-1 py-2 text-right">Price</th>
-                    <th className="px-1 py-2 text-center">Qty</th>
-                    <th className="px-2 py-2 text-right">Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {cat.products.map((p) => {
-                    const n = qty[p.id] ?? 0;
-                    return (
-                      <tr key={p.id} className="border-t border-border align-middle">
-                        <td className="px-2 py-2">
-                          <div className="min-w-0">
-                            <div className="font-semibold leading-tight">{p.name}</div>
-                            <div className="text-xs text-muted-foreground">
-                              {p.tamil} &middot; {p.unit}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-1 py-2 text-right text-xs text-muted-foreground line-through">
-                          {p.rate}
-                        </td>
-                        <td className="px-1 py-2 text-right font-bold text-primary">
-                          {p.price}
-                        </td>
-                        <td className="px-1 py-2 text-center">
-                          <input
-                            type="number"
-                            min={0}
-                            inputMode="numeric"
-                            value={n === 0 ? "" : n}
-                            onChange={(e) => setValue(p.id, Number(e.target.value))}
-                            className="w-14 rounded border border-input bg-background px-1.5 py-1.5 text-center text-base outline-none focus:border-accent"
-                          />
-                        </td>
-                        <td className="px-2 py-2 text-right font-semibold">
-                          {n > 0 ? n * p.price : "-"}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+              <div className="hidden bg-muted px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground sm:grid sm:grid-cols-[80px_1fr_90px_70px_90px_150px_90px]">
+                <span>Image</span>
+                <span>Product Name</span>
+                <span className="text-right">Price</span>
+                <span className="text-center">Unit</span>
+                <span className="text-right">Discount</span>
+                <span className="text-center">Quantity</span>
+                <span className="text-right">Total</span>
+              </div>
+
+              {cat.products.map((p) => {
+                const n = qty[p.id] ?? 0;
+                return (
+                  <div
+                    key={p.id}
+                    className="grid grid-cols-[64px_1fr] items-center gap-3 border-t border-border px-3 py-2.5 sm:grid-cols-[80px_1fr_90px_70px_90px_150px_90px] sm:gap-2"
+                  >
+                    <img
+                      src={`/products/${p.slug}.jpg`}
+                      alt={p.name}
+                      loading="lazy"
+                      className="h-16 w-16 rounded-md border border-border object-cover"
+                    />
+
+                    <div className="min-w-0">
+                      <div className="text-sm font-semibold leading-tight">{p.name}</div>
+                      <div className="text-xs text-muted-foreground">{p.tamil}</div>
+                      <div className="mt-1 flex items-center gap-2 text-xs sm:hidden">
+                        <span className="text-muted-foreground line-through">Rs {p.rate}</span>
+                        <span className="font-bold text-primary">Rs {p.price}</span>
+                        <span className="text-muted-foreground">/ {p.unit}</span>
+                      </div>
+                      <div className="mt-2 flex items-center gap-2 sm:hidden">
+                        <QtyControl value={n} onChange={(v) => setValue(p.id, v)} />
+                        <span className="ml-auto text-sm font-semibold">
+                          {n > 0 ? `Rs ${n * p.price}` : "-"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <span className="hidden text-right text-sm text-muted-foreground line-through sm:block">
+                      {p.rate}
+                    </span>
+                    <span className="hidden text-center text-xs text-muted-foreground sm:block">
+                      {p.unit}
+                    </span>
+                    <span className="hidden text-right font-bold text-primary sm:block">
+                      {p.price}
+                    </span>
+                    <span className="hidden justify-center sm:flex">
+                      <QtyControl value={n} onChange={(v) => setValue(p.id, v)} />
+                    </span>
+                    <span className="hidden text-right text-sm font-semibold sm:block">
+                      {n > 0 ? n * p.price : "-"}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </section>
         ))}
@@ -190,60 +189,134 @@ function Index() {
           <a href={`mailto:${SHOP.email}`}>{SHOP.email}</a>
         </p>
         <p className="mt-4 text-xs opacity-70">
-          As per Supreme Court order, online sale of firecrackers is not permitted. Orders
-          placed here are treated as enquiries and completed as direct in-shop billing.
+          As per Supreme Court order, online sale of firecrackers is not permitted. Orders placed
+          here are treated as enquiries and completed as direct in-shop billing.
         </p>
       </footer>
 
+      {/* Floating buttons */}
+      <a
+        href={`https://wa.me/91${SHOP.phone}`}
+        target="_blank"
+        rel="noopener"
+        aria-label="Chat on WhatsApp"
+        className="fixed bottom-24 left-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] shadow-xl"
+      >
+        <svg viewBox="0 0 24 24" className="h-7 w-7 fill-white">
+          <path d="M12.04 2A9.9 9.9 0 0 0 2.1 11.9c0 1.75.46 3.45 1.34 4.95L2 22l5.3-1.39a9.9 9.9 0 0 0 4.74 1.2h.01a9.9 9.9 0 0 0 9.9-9.9A9.9 9.9 0 0 0 12.04 2Zm5.8 14.05c-.24.68-1.4 1.3-1.94 1.35-.5.05-1.13.07-1.82-.11-.42-.11-.96-.29-1.65-.59-2.9-1.25-4.79-4.17-4.94-4.37-.14-.19-1.18-1.57-1.18-3s.75-2.13 1.02-2.42c.27-.29.58-.36.78-.36h.56c.18 0 .42-.07.66.5.24.58.82 2 .89 2.15.07.14.12.31.02.5-.1.19-.15.31-.29.48l-.44.51c-.14.14-.29.3-.12.59.17.29.74 1.22 1.59 1.98 1.09.97 2.01 1.27 2.3 1.42.29.14.46.12.63-.07.17-.19.72-.84.91-1.13.19-.29.39-.24.65-.14.26.09 1.68.79 1.97.94.29.14.48.21.55.33.07.12.07.69-.17 1.37Z" />
+        </svg>
+      </a>
+
+      <button
+        onClick={() => setShowCart(true)}
+        aria-label="Open cart"
+        className="btn-gold fixed bottom-24 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full shadow-xl"
+      >
+        <ShoppingCart className="h-6 w-6" />
+        {totalQty > 0 && (
+          <span className="absolute -right-1 -top-1 flex h-6 min-w-6 items-center justify-center rounded-full bg-primary px-1 text-xs font-bold text-primary-foreground">
+            {totalQty}
+          </span>
+        )}
+      </button>
+
+      {/* Bottom order bar */}
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 px-3 py-2.5 shadow-[0_-6px_20px_-12px_rgba(0,0,0,0.4)] backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center gap-3">
           <div className="min-w-0 leading-tight">
             <div className="text-xs text-muted-foreground">Total Items {totalQty}</div>
-            <div className="text-lg font-bold text-primary">Rs {totalAmount}</div>
+            <div className="text-lg font-bold text-primary">Total Price: Rs {netTotal}</div>
           </div>
           <button
-            onClick={openForm}
-            disabled={totalAmount < SHOP.minOrder}
-            className="btn-gold hover:btn-gold-hover ml-auto px-5 py-3 text-sm disabled:opacity-50"
+            onClick={() => setShowCart(true)}
+            className="btn-gold hover:btn-gold-hover ml-auto px-6 py-3 text-sm"
           >
-            {totalAmount < SHOP.minOrder
-              ? `Min Rs ${SHOP.minOrder}`
-              : "Place Order"}
+            Order Now
           </button>
         </div>
       </div>
 
-      {showForm && (
-        <OrderForm
+      {showCart && (
+        <Cart
           lines={lines}
-          totalQty={totalQty}
-          totalAmount={totalAmount}
-          onClose={() => setShowForm(false)}
-          onSuccess={() => {
-            setShowForm(false);
-            setQty({});
-            setDone(true);
+          setQty={setValue}
+          clear={() => setQty({})}
+          onClose={() => setShowCart(false)}
+          onDone={(data) => {
+            setShowCart(false);
+            setDone(data);
           }}
         />
       )}
 
       {done && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/60 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-ink/60 p-4">
           <div className="w-full max-w-sm rounded-2xl bg-card p-6 text-center shadow-2xl">
-            <h2 className="text-xl font-bold text-primary">Order Received</h2>
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
+              <CheckCircle2 className="h-12 w-12 text-green-600" />
+            </div>
+            <h2 className="mt-4 text-xl font-bold">Enquiry Submitted Successfully!</h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              Thank you! Our team will call you shortly on your mobile number to confirm
-              your order.
+              Thank you! Your enquiry has been received.
+            </p>
+            <div className="mt-4 rounded-xl border border-green-200 bg-green-50 px-4 py-4">
+              <div className="text-xs uppercase tracking-wide text-muted-foreground">
+                Enquiry Number
+              </div>
+              <div className="text-2xl font-bold text-green-700">{done.orderId}</div>
+              <div className="mt-1 text-sm">Total: Rs {done.netTotal}</div>
+            </div>
+            <p className="mt-4 text-sm text-muted-foreground">
+              Our team will verify your enquiry and contact you via email or WhatsApp with payment
+              and delivery details. The invoice has been emailed to you.
             </p>
             <button
-              onClick={() => setDone(false)}
-              className="btn-gold hover:btn-gold-hover mt-5 w-full py-2.5 text-sm"
+              onClick={() => downloadInvoice(done)}
+              className="btn-gold hover:btn-gold-hover mt-5 w-full py-3 text-sm"
             >
-              Close
+              Download Invoice PDF
+            </button>
+            <button
+              onClick={() => setDone(null)}
+              className="mt-2 w-full rounded-md border border-input py-2.5 text-sm font-semibold"
+            >
+              Shop More
             </button>
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function QtyControl({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  return (
+    <div className="flex items-center gap-1">
+      <button
+        type="button"
+        aria-label="Decrease quantity"
+        onClick={() => onChange(Math.max(0, value - 1))}
+        className="flex h-8 w-8 items-center justify-center rounded border border-input bg-background"
+      >
+        <Minus className="h-4 w-4" />
+      </button>
+      <input
+        type="number"
+        min={0}
+        inputMode="numeric"
+        value={value === 0 ? "" : value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        placeholder="0"
+        className="w-12 rounded border border-input bg-background px-1 py-1.5 text-center text-base outline-none focus:border-accent"
+      />
+      <button
+        type="button"
+        aria-label="Increase quantity"
+        onClick={() => onChange(value + 1)}
+        className="flex h-8 w-8 items-center justify-center rounded border border-input bg-background"
+      >
+        <Plus className="h-4 w-4" />
+      </button>
     </div>
   );
 }

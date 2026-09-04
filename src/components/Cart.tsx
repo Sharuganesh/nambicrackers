@@ -28,6 +28,21 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
   const [form, setForm] = useState(EMPTY);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
+  const closedByBack = useRef(false);
+
+  // Mobile hardware / gesture back closes the cart instead of leaving the site.
+  useEffect(() => {
+    window.history.pushState({ cart: true }, "");
+    const onPop = () => {
+      closedByBack.current = true;
+      onClose();
+    };
+    window.addEventListener("popstate", onPop);
+    return () => {
+      window.removeEventListener("popstate", onPop);
+      if (!closedByBack.current && window.history.state?.cart) window.history.back();
+    };
+  }, [onClose]);
 
   const mrpTotal = lines.reduce((s, l) => s + l.qty * l.rate, 0);
   const netTotal = lines.reduce((s, l) => s + l.qty * l.price, 0);

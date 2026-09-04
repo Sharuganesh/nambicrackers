@@ -167,7 +167,7 @@ export const CATEGORIES: Category[] = [
       p("Army Force", "ஆர்மி போர்ஸ்", 1200, "1 Box"),
       p("Dreams (Red & Green)", "ட்ரிம்ஸ்", 1200, "1 Box"),
       p("7 Shots", "7 ஷாட்ஸ்", 900, "1 Box"),
-      p("Penta Magice (5 Colours)", "பென்டா மேஜிக்", 1300, "1 Box"),
+      p("Penta Magic (5 Colours)", "பென்டா மேஜிக்", 1300, "1 Box"),
     ],
   },
   {
@@ -221,7 +221,7 @@ export const CATEGORIES: Category[] = [
   {
     name: "Candle Varities",
     products: [
-      p("Amazing Penicl (3 Pcs)", "அமேசிங் பென்சில்", 700, "1 Box"),
+      p("Amazing Pencil (3 Pcs)", "அமேசிங் பென்சில்", 700, "1 Box"),
       p("Star Rain (Crackling)", "ஸ்டார் ரைன்", 1800, "1 Box"),
       p("Trix Candle", "ட்ரிக்ஸ் கேண்டில்", 1500, "1 Box"),
       p("Pistol 5G Gun (2 Pcs)", "பிஸ்டல் கன்", 1800, "1 Box"),
@@ -229,7 +229,7 @@ export const CATEGORIES: Category[] = [
       p("I Cone (2 Pcs)", "ஐ கோன்", 1700, "1 Box"),
       p("Lorex Pencil (3 Pcs)", "லோரெக்ஸ் பென்சில்", 1000, "1 Box"),
       p("Colour Smoke (Multicolour)", "கலர் ஸ்மோக்", 1500, "1 Box"),
-      p("Gun Squard (2 Guns)", "கன் ஸ்குவார்டு", 1750, "1 Box"),
+      p("Gun Squad (2 Guns)", "கன் ஸ்குவார்டு", 1750, "1 Box"),
     ],
   },
   {

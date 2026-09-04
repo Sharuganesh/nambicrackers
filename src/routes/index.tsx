@@ -65,7 +65,7 @@ function Index() {
       <section className="border-b border-border bg-secondary">
         <div className="mx-auto max-w-5xl px-4 py-7 text-center">
           <img
-            src="/logo.jpg"
+            src="/logo.png"
             alt="Nambi Crackers Sivakasi"
             className="mx-auto h-28 w-28 rounded-full object-contain sm:h-36 sm:w-36"
           />

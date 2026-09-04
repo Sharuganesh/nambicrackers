@@ -32,7 +32,7 @@ let logoCache: string | null = null;
 async function getLogo(): Promise<string | null> {
   if (logoCache !== null) return logoCache;
   try {
-    const res = await fetch("/logo.jpg");
+    const res = await fetch("/logo.png");
     const blob = await res.blob();
     logoCache = await new Promise<string>((resolve) => {
       const fr = new FileReader();
@@ -54,7 +54,7 @@ export async function buildInvoice(data: InvoiceData): Promise<jsPDF> {
   doc.rect(0, 0, W, 92, "F");
 
   const logo = await getLogo();
-  if (logo) doc.addImage(logo, "JPEG", 32, 14, 64, 64);
+  if (logo) doc.addImage(logo, "PNG", 32, 14, 64, 64);
 
   doc.setTextColor(255, 214, 102);
   doc.setFont("helvetica", "bold");

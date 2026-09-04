@@ -17,7 +17,7 @@ export function SiteHeader() {
     <header className="surface-royal sticky top-0 z-30 shadow-lg">
       <div className="mx-auto flex max-w-5xl items-center gap-3 px-3 py-2.5">
         <img
-          src="/logo.jpg"
+          src="/logo.png"
           alt="Nambi Crackers logo"
           className="h-11 w-11 shrink-0 rounded-full object-contain"
           width={44}

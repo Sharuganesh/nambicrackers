@@ -4,19 +4,22 @@ import type { Category } from "@/data/products";
 export function QtyControl({
   value,
   onChange,
+  compact,
 }: {
   value: number;
   onChange: (v: number) => void;
+  compact?: boolean;
 }) {
+  const btn = compact ? "h-7 w-7" : "h-8 w-8";
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center justify-center gap-1">
       <button
         type="button"
         aria-label="Decrease quantity"
         onClick={() => onChange(Math.max(0, value - 1))}
-        className="flex h-8 w-8 items-center justify-center rounded border border-input bg-background"
+        className={`flex ${btn} shrink-0 items-center justify-center rounded border border-input bg-background`}
       >
-        <Minus className="h-4 w-4" />
+        <Minus className="h-3.5 w-3.5" />
       </button>
       <input
         type="number"
@@ -25,19 +28,22 @@ export function QtyControl({
         value={value === 0 ? "" : value}
         onChange={(e) => onChange(Number(e.target.value))}
         placeholder="0"
-        className="w-12 rounded border border-input bg-background px-1 py-1.5 text-center text-base outline-none focus:border-accent"
+        className={`${compact ? "w-9 text-sm" : "w-12 text-base"} rounded border border-input bg-background px-1 py-1 text-center outline-none focus:border-accent`}
       />
       <button
         type="button"
         aria-label="Increase quantity"
         onClick={() => onChange(value + 1)}
-        className="flex h-8 w-8 items-center justify-center rounded border border-input bg-background"
+        className={`flex ${btn} shrink-0 items-center justify-center rounded border border-input bg-background`}
       >
-        <Plus className="h-4 w-4" />
+        <Plus className="h-3.5 w-3.5" />
       </button>
     </div>
   );
 }
+
+const ROW =
+  "grid grid-cols-[40px_minmax(0,1fr)_46px_40px_46px_96px] items-center gap-1 sm:grid-cols-[72px_minmax(0,1fr)_80px_70px_80px_150px_80px] sm:gap-2";
 
 export function ProductTable({
   cat,
@@ -50,55 +56,50 @@ export function ProductTable({
 }) {
   return (
     <div className="overflow-hidden rounded-b-md border border-t-0 border-border bg-card">
-      <div className="hidden bg-muted px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground sm:grid sm:grid-cols-[80px_1fr_90px_70px_90px_150px_90px]">
+      <div
+        className={`${ROW} bg-muted px-2 py-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground sm:px-3 sm:text-xs`}
+      >
         <span>Image</span>
         <span>Product Name</span>
         <span className="text-right">Price</span>
         <span className="text-center">Unit</span>
         <span className="text-right">Discount</span>
         <span className="text-center">Quantity</span>
-        <span className="text-right">Total</span>
+        <span className="hidden text-right sm:block">Total</span>
       </div>
 
       {cat.products.map((p) => {
         const n = qty[p.id] ?? 0;
         return (
-          <div
-            key={p.id}
-            className="grid grid-cols-[64px_1fr] items-center gap-3 border-t border-border px-3 py-2.5 sm:grid-cols-[80px_1fr_90px_70px_90px_150px_90px] sm:gap-2"
-          >
+          <div key={p.id} className={`${ROW} border-t border-border px-2 py-2 sm:px-3 sm:py-2.5`}>
             <img
               src={`/products/${p.slug}.jpg`}
               alt={p.name}
               loading="lazy"
-              className="h-16 w-16 rounded-md border border-border object-cover"
+              className="h-10 w-10 rounded border border-border object-cover sm:h-16 sm:w-16"
             />
 
             <div className="min-w-0">
-              <div className="text-sm font-semibold leading-tight">{p.name}</div>
-              <div className="text-xs text-muted-foreground">{p.tamil}</div>
-              <div className="mt-1 flex items-center gap-2 text-xs sm:hidden">
-                <span className="text-muted-foreground line-through">Rs {p.rate}</span>
-                <span className="font-bold text-primary">Rs {p.price}</span>
-                <span className="text-muted-foreground">/ {p.unit}</span>
-              </div>
-              <div className="mt-2 flex items-center gap-2 sm:hidden">
-                <QtyControl value={n} onChange={(v) => setValue(p.id, v)} />
-                <span className="ml-auto text-sm font-semibold">
-                  {n > 0 ? `Rs ${n * p.price}` : "-"}
-                </span>
-              </div>
+              <div className="text-xs font-semibold leading-tight sm:text-sm">{p.name}</div>
+              <div className="truncate text-[10px] text-muted-foreground sm:text-xs">{p.tamil}</div>
+              {n > 0 && (
+                <div className="text-[10px] font-semibold text-primary sm:hidden">
+                  Total Rs {n * p.price}
+                </div>
+              )}
             </div>
 
-            <span className="hidden text-right text-sm text-muted-foreground line-through sm:block">
+            <span className="text-right text-[11px] text-muted-foreground line-through sm:text-sm">
               {p.rate}
             </span>
-            <span className="hidden text-center text-xs text-muted-foreground sm:block">
+            <span className="text-center text-[10px] leading-tight text-muted-foreground sm:text-xs">
               {p.unit}
             </span>
-            <span className="hidden text-right font-bold text-primary sm:block">{p.price}</span>
-            <span className="hidden justify-center sm:flex">
-              <QtyControl value={n} onChange={(v) => setValue(p.id, v)} />
+            <span className="text-right text-xs font-bold text-primary sm:text-base">
+              {p.price}
+            </span>
+            <span className="flex justify-center">
+              <QtyControl value={n} onChange={(v) => setValue(p.id, v)} compact />
             </span>
             <span className="hidden text-right text-sm font-semibold sm:block">
               {n > 0 ? n * p.price : "-"}

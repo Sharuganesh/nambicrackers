@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { CheckCircle2, ChevronDown, Minus, Plus } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { FloatingActions } from "@/components/FloatingActions";
+import { ProductTable } from "@/components/ProductTable";
 import { CATEGORIES, ALL_PRODUCTS } from "@/data/products";
 import { SHOP } from "@/config";
 import { Cart, type CartLine } from "@/components/Cart";
@@ -34,7 +35,6 @@ function Index() {
   const [query, setQuery] = useState("");
   const [showCart, setShowCart] = useState(false);
   const [done, setDone] = useState<InvoiceData | null>(null);
-  const [open, setOpen] = useState<Record<string, boolean>>({});
 
   const lines: CartLine[] = useMemo(
     () =>
@@ -67,7 +67,7 @@ function Index() {
           <img
             src="/logo.jpg"
             alt="Nambi Crackers Sivakasi"
-            className="mx-auto h-28 w-28 rounded-xl object-contain sm:h-36 sm:w-36"
+            className="mx-auto h-28 w-28 rounded-full object-contain sm:h-36 sm:w-36"
           />
           <h1 className="mt-3 text-2xl font-bold text-primary sm:text-3xl">
             Sivakasi Crackers at 90% Off
@@ -91,84 +91,13 @@ function Index() {
       <main className="mx-auto max-w-5xl px-2 py-4 sm:px-4">
         {categories.map((cat) => {
           const slug = cat.name.replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase();
-          const isOpen = q ? true : (open[cat.name] ?? false);
           return (
-          <section key={cat.name} id={`cat-${slug}`} className="mb-3">
-            <button
-              type="button"
-              onClick={() => setOpen((o) => ({ ...o, [cat.name]: !isOpen }))}
-              aria-expanded={isOpen}
-              className="cat-bar flex w-full items-center justify-between gap-2 rounded-md px-3 py-3 text-sm font-bold sm:text-base"
-            >
-              <span className="text-left">{cat.name}</span>
-              <ChevronDown
-                className={`h-5 w-5 shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`}
-              />
-            </button>
-
-            {isOpen && (
-            <div className="overflow-hidden rounded-b-md border border-t-0 border-border bg-card">
-              <div className="hidden bg-muted px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground sm:grid sm:grid-cols-[80px_1fr_90px_70px_90px_150px_90px]">
-                <span>Image</span>
-                <span>Product Name</span>
-                <span className="text-right">Price</span>
-                <span className="text-center">Unit</span>
-                <span className="text-right">Discount</span>
-                <span className="text-center">Quantity</span>
-                <span className="text-right">Total</span>
+            <section key={cat.name} id={`cat-${slug}`} className="mb-5 scroll-mt-32">
+              <div className="cat-bar rounded-t-md px-3 py-3 text-sm font-bold sm:text-base">
+                {cat.name}
               </div>
-
-              {cat.products.map((p) => {
-                const n = qty[p.id] ?? 0;
-                return (
-                  <div
-                    key={p.id}
-                    className="grid grid-cols-[64px_1fr] items-center gap-3 border-t border-border px-3 py-2.5 sm:grid-cols-[80px_1fr_90px_70px_90px_150px_90px] sm:gap-2"
-                  >
-                    <img
-                      src={`/products/${p.slug}.jpg`}
-                      alt={p.name}
-                      loading="lazy"
-                      className="h-16 w-16 rounded-md border border-border object-cover"
-                    />
-
-                    <div className="min-w-0">
-                      <div className="text-sm font-semibold leading-tight">{p.name}</div>
-                      <div className="text-xs text-muted-foreground">{p.tamil}</div>
-                      <div className="mt-1 flex items-center gap-2 text-xs sm:hidden">
-                        <span className="text-muted-foreground line-through">Rs {p.rate}</span>
-                        <span className="font-bold text-primary">Rs {p.price}</span>
-                        <span className="text-muted-foreground">/ {p.unit}</span>
-                      </div>
-                      <div className="mt-2 flex items-center gap-2 sm:hidden">
-                        <QtyControl value={n} onChange={(v) => setValue(p.id, v)} />
-                        <span className="ml-auto text-sm font-semibold">
-                          {n > 0 ? `Rs ${n * p.price}` : "-"}
-                        </span>
-                      </div>
-                    </div>
-
-                    <span className="hidden text-right text-sm text-muted-foreground line-through sm:block">
-                      {p.rate}
-                    </span>
-                    <span className="hidden text-center text-xs text-muted-foreground sm:block">
-                      {p.unit}
-                    </span>
-                    <span className="hidden text-right font-bold text-primary sm:block">
-                      {p.price}
-                    </span>
-                    <span className="hidden justify-center sm:flex">
-                      <QtyControl value={n} onChange={(v) => setValue(p.id, v)} />
-                    </span>
-                    <span className="hidden text-right text-sm font-semibold sm:block">
-                      {n > 0 ? n * p.price : "-"}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-            )}
-          </section>
+              <ProductTable cat={cat} qty={qty} setValue={setValue} />
+            </section>
           );
         })}
 
@@ -246,38 +175,6 @@ function Index() {
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-function QtyControl({ value, onChange }: { value: number; onChange: (v: number) => void }) {
-  return (
-    <div className="flex items-center gap-1">
-      <button
-        type="button"
-        aria-label="Decrease quantity"
-        onClick={() => onChange(Math.max(0, value - 1))}
-        className="flex h-8 w-8 items-center justify-center rounded border border-input bg-background"
-      >
-        <Minus className="h-4 w-4" />
-      </button>
-      <input
-        type="number"
-        min={0}
-        inputMode="numeric"
-        value={value === 0 ? "" : value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        placeholder="0"
-        className="w-12 rounded border border-input bg-background px-1 py-1.5 text-center text-base outline-none focus:border-accent"
-      />
-      <button
-        type="button"
-        aria-label="Increase quantity"
-        onClick={() => onChange(value + 1)}
-        className="flex h-8 w-8 items-center justify-center rounded border border-input bg-background"
-      >
-        <Plus className="h-4 w-4" />
-      </button>
     </div>
   );
 }

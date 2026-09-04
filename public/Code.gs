@@ -38,6 +38,9 @@ function doGet(e) {
   if (e && e.parameter && e.parameter.action === 'list') {
     return listOrders_();
   }
+  if (e && e.parameter && e.parameter.action === 'track') {
+    return trackOrders_(e.parameter.query || '');
+  }
   return handleRequest(e);
 }
 
@@ -95,25 +98,41 @@ function handleRequest(e) {
     sheet.getRange(row, 10).setWrap(true);
     sheet.setRowHeight(row, Math.max(21, items.split(String.fromCharCode(10)).length * 16));
 
-    sendInvoiceMails_(params, orderId, items);
+    var mail = sendInvoiceMails_(params, orderId, items);
 
-    return json_({ success: true, orderId: orderId });
+    return json_({
+      success: true,
+      orderId: orderId,
+      mailSent: mail.sent,
+      mailError: mail.error,
+      remainingQuota: mail.quota
+    });
   } catch (err) {
     return json_({ success: false, error: String(err) });
   }
 }
 
 function sendInvoiceMails_(params, orderId, items) {
+  var result = { sent: false, error: '', quota: -1 };
   try {
+    result.quota = MailApp.getRemainingDailyQuota();
+
     var attachments = [];
     if (params.pdf) {
-      var blob = Utilities.newBlob(
-        Utilities.base64Decode(params.pdf),
-        'application/pdf',
-        orderId + '-invoice.pdf'
-      );
-      attachments.push(blob);
+      try {
+        var clean = String(params.pdf).replace(/^data:[^,]*,/, '').replace(/\s/g, '');
+        attachments.push(
+          Utilities.newBlob(
+            Utilities.base64Decode(clean),
+            'application/pdf',
+            orderId + '-invoice.pdf'
+          )
+        );
+      } catch (pdfErr) {
+        result.error += 'pdf: ' + pdfErr + '; ';
+      }
     }
+
 
     var html =
       '<div style="font-family:Arial,sans-serif;max-width:600px">' +
@@ -132,24 +151,82 @@ function sendInvoiceMails_(params, orderId, items) {
       '<p>The full invoice is attached as a PDF.</p>' +
       '</div>';
 
-    MailApp.sendEmail({
-      to: SHOP_EMAIL,
-      subject: 'New Order ' + orderId + ' - ' + (params.name || ''),
-      htmlBody: html,
-      attachments: attachments
-    });
+    var shopOk = send_(SHOP_EMAIL, 'New Order ' + orderId + ' - ' + (params.name || ''), html, attachments, result);
 
+    var custOk = true;
     if (params.email) {
-      MailApp.sendEmail({
-        to: params.email,
-        subject: SHOP_NAME + ' - Order ' + orderId + ' received',
-        htmlBody:
-          '<p>Thank you for your order with ' + SHOP_NAME + '.</p>' + html,
-        attachments: attachments
-      });
+      custOk = send_(
+        params.email,
+        SHOP_NAME + ' - Order ' + orderId + ' received',
+        '<p>Thank you for your order with ' + SHOP_NAME + '.</p>' + html,
+        attachments,
+        result
+      );
     }
+
+    result.sent = shopOk && custOk;
   } catch (mailErr) {
     // mailing must never break the order save
+    result.error += String(mailErr);
+  }
+  return result;
+}
+
+/** Tries GmailApp first (supports attachments + replyTo), falls back to MailApp. */
+function send_(to, subject, html, attachments, result) {
+  try {
+    GmailApp.sendEmail(to, subject, html.replace(/<[^>]+>/g, ' '), {
+      htmlBody: html,
+      name: SHOP_NAME,
+      attachments: attachments
+    });
+    return true;
+  } catch (e1) {
+    try {
+      MailApp.sendEmail({
+        to: to,
+        subject: subject,
+        htmlBody: html,
+        name: SHOP_NAME,
+        attachments: attachments
+      });
+      return true;
+    } catch (e2) {
+      result.error += to + ': ' + e2 + '; ';
+      return false;
+    }
+  }
+}
+
+function trackOrders_(query) {
+  try {
+    var q = String(query || '').trim().toLowerCase();
+    if (!q) return json_({ success: true, orders: [] });
+
+    var sheet = getSheet_();
+    var lastRow = sheet.getLastRow();
+    if (lastRow < 2) return json_({ success: true, orders: [] });
+
+    var values = sheet.getRange(2, 1, lastRow - 1, HEADERS.length).getValues();
+    var orders = [];
+    for (var i = values.length - 1; i >= 0; i--) {
+      var r = values[i];
+      var orderId = String(r[1] || '').toLowerCase();
+      var mobile = String(r[3] || '').replace(/\D/g, '');
+      if (orderId !== q && mobile !== q.replace(/\D/g, '')) continue;
+      orders.push({
+        orderId: String(r[1] || ''),
+        name: String(r[2] || ''),
+        timestamp: r[0] ? Utilities.formatDate(new Date(r[0]), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a') : '',
+        items: String(r[9] || ''),
+        totalQty: String(r[10] || ''),
+        totalAmount: String(r[13] || ''),
+        status: String(r[14] || 'Confirmed')
+      });
+    }
+    return json_({ success: true, orders: orders });
+  } catch (err) {
+    return json_({ success: false, error: String(err) });
   }
 }
 

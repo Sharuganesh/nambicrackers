@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { APPS_SCRIPT_URL, SHOP } from "@/config";
 
-export const Route = createFileRoute("/orders")({
+export const Route = createFileRoute("/orders-nambi2026")({
   head: () => ({
     meta: [
       { title: "Live Orders Dashboard — Nambi Crackers" },

@@ -6,6 +6,7 @@ import { SHOP } from "@/config";
 const NAV = [
   { to: "/", label: "Home" },
   { to: "/categories", label: "Categories" },
+  { to: "/track", label: "Track Order" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
 ] as const;

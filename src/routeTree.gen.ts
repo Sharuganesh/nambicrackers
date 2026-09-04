@@ -13,7 +13,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as CategoriesRouteImport } from './routes/categories'
 import { Route as ContactRouteImport } from './routes/contact'
-import { Route as OrdersRouteImport } from './routes/orders'
+import { Route as OrdersNambi2026RouteImport } from './routes/orders-nambi2026'
+import { Route as TrackRouteImport } from './routes/track'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -35,9 +36,14 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OrdersRoute = OrdersRouteImport.update({
-  id: '/orders',
-  path: '/orders',
+const OrdersNambi2026Route = OrdersNambi2026RouteImport.update({
+  id: '/orders-nambi2026',
+  path: '/orders-nambi2026',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrackRoute = TrackRouteImport.update({
+  id: '/track',
+  path: '/track',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -46,14 +52,16 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/categories': typeof CategoriesRoute
   '/contact': typeof ContactRoute
-  '/orders': typeof OrdersRoute
+  '/orders-nambi2026': typeof OrdersNambi2026Route
+  '/track': typeof TrackRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/categories': typeof CategoriesRoute
   '/contact': typeof ContactRoute
-  '/orders': typeof OrdersRoute
+  '/orders-nambi2026': typeof OrdersNambi2026Route
+  '/track': typeof TrackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -61,14 +69,24 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/categories': typeof CategoriesRoute
   '/contact': typeof ContactRoute
-  '/orders': typeof OrdersRoute
+  '/orders-nambi2026': typeof OrdersNambi2026Route
+  '/track': typeof TrackRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/categories' | '/contact' | '/orders'
+  fullPaths:
+    '/' | '/about' | '/categories' | '/contact' | '/orders-nambi2026' | '/track'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/categories' | '/contact' | '/orders'
-  id: '__root__' | '/' | '/about' | '/categories' | '/contact' | '/orders'
+  to:
+    '/' | '/about' | '/categories' | '/contact' | '/orders-nambi2026' | '/track'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/categories'
+    | '/contact'
+    | '/orders-nambi2026'
+    | '/track'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -76,7 +94,8 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   CategoriesRoute: typeof CategoriesRoute
   ContactRoute: typeof ContactRoute
-  OrdersRoute: typeof OrdersRoute
+  OrdersNambi2026Route: typeof OrdersNambi2026Route
+  TrackRoute: typeof TrackRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -109,11 +128,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/orders': {
-      id: '/orders'
-      path: '/orders'
-      fullPath: '/orders'
-      preLoaderRoute: typeof OrdersRouteImport
+    '/orders-nambi2026': {
+      id: '/orders-nambi2026'
+      path: '/orders-nambi2026'
+      fullPath: '/orders-nambi2026'
+      preLoaderRoute: typeof OrdersNambi2026RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/track': {
+      id: '/track'
+      path: '/track'
+      fullPath: '/track'
+      preLoaderRoute: typeof TrackRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -124,7 +150,8 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   CategoriesRoute: CategoriesRoute,
   ContactRoute: ContactRoute,
-  OrdersRoute: OrdersRoute,
+  OrdersNambi2026Route: OrdersNambi2026Route,
+  TrackRoute: TrackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

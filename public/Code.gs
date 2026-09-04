@@ -38,6 +38,9 @@ function doGet(e) {
   if (e && e.parameter && e.parameter.action === 'list') {
     return listOrders_();
   }
+  if (e && e.parameter && e.parameter.action === 'track') {
+    return trackOrders_(e.parameter.query || '');
+  }
   return handleRequest(e);
 }
 

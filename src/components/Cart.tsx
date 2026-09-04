@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Trash2, X } from "lucide-react";
 import { APPS_SCRIPT_URL, SHOP } from "@/config";
 import type { Product } from "@/data/products";

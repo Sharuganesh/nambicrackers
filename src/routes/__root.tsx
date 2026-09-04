@@ -87,7 +87,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "Nambi Crackers Sivakasi" },
       {
         property: "og:description",
-        content: "Sivakasi crackers at 80% off. Full price list and easy online ordering.",
+        content: "Crackers discount at 90%. Full price list and easy online ordering.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

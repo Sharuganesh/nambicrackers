@@ -23,7 +23,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "Direct-from-factory Sivakasi crackers at 90% off. Browse the full price list and order online.",
+          "Crackers discount at 90%. Browse the full price list and order online.",
       },
     ],
   }),
@@ -70,7 +70,7 @@ function Index() {
             className="mx-auto h-28 w-28 rounded-full object-contain sm:h-36 sm:w-36"
           />
           <h1 className="mt-3 text-2xl font-bold text-primary sm:text-3xl">
-            Sivakasi Crackers at 90% Off
+            Crackers Discount at 90%
           </h1>
           <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">{SHOP.address}</p>
           <p className="mt-3 inline-block rounded-full bg-primary px-4 py-1.5 text-xs font-semibold text-primary-foreground">

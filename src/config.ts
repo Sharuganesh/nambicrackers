@@ -11,6 +11,6 @@ export const SHOP = {
   phoneDisplay: "+91 63816 55906",
   email: "nambicrackersorder@gmail.com",
   address: "3/1320/6, Sivakasi to Satur Main Road, Paraipatti, Sivakasi - 626189",
-  minOrder: 2500,
+  minOrder: 3000,
   discount: 90,
 };

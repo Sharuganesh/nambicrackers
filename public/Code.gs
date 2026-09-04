@@ -98,25 +98,41 @@ function handleRequest(e) {
     sheet.getRange(row, 10).setWrap(true);
     sheet.setRowHeight(row, Math.max(21, items.split(String.fromCharCode(10)).length * 16));
 
-    sendInvoiceMails_(params, orderId, items);
+    var mail = sendInvoiceMails_(params, orderId, items);
 
-    return json_({ success: true, orderId: orderId });
+    return json_({
+      success: true,
+      orderId: orderId,
+      mailSent: mail.sent,
+      mailError: mail.error,
+      remainingQuota: mail.quota
+    });
   } catch (err) {
     return json_({ success: false, error: String(err) });
   }
 }
 
 function sendInvoiceMails_(params, orderId, items) {
+  var result = { sent: false, error: '', quota: -1 };
   try {
+    result.quota = MailApp.getRemainingDailyQuota();
+
     var attachments = [];
     if (params.pdf) {
-      var blob = Utilities.newBlob(
-        Utilities.base64Decode(params.pdf),
-        'application/pdf',
-        orderId + '-invoice.pdf'
-      );
-      attachments.push(blob);
+      try {
+        var clean = String(params.pdf).replace(/^data:[^,]*,/, '').replace(/\s/g, '');
+        attachments.push(
+          Utilities.newBlob(
+            Utilities.base64Decode(clean),
+            'application/pdf',
+            orderId + '-invoice.pdf'
+          )
+        );
+      } catch (pdfErr) {
+        result.error += 'pdf: ' + pdfErr + '; ';
+      }
     }
+
 
     var html =
       '<div style="font-family:Arial,sans-serif;max-width:600px">' +

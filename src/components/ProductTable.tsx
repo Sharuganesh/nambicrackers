@@ -1,5 +1,6 @@
-import { Minus, Plus } from "lucide-react";
-import type { Category } from "@/data/products";
+import { useState } from "react";
+import { Minus, Plus, X } from "lucide-react";
+import type { Category, Product } from "@/data/products";
 
 export function QtyControl({
   value,
@@ -10,16 +11,16 @@ export function QtyControl({
   onChange: (v: number) => void;
   compact?: boolean;
 }) {
-  const btn = compact ? "h-7 w-7" : "h-8 w-8";
+  const btn = compact ? "h-6 w-6" : "h-8 w-8";
   return (
-    <div className="flex items-center justify-center gap-1">
+    <div className="flex items-center justify-center gap-0.5">
       <button
         type="button"
         aria-label="Decrease quantity"
         onClick={() => onChange(Math.max(0, value - 1))}
         className={`flex ${btn} shrink-0 items-center justify-center rounded border border-input bg-background`}
       >
-        <Minus className="h-3.5 w-3.5" />
+        <Minus className="h-3 w-3" />
       </button>
       <input
         type="number"
@@ -28,7 +29,7 @@ export function QtyControl({
         value={value === 0 ? "" : value}
         onChange={(e) => onChange(Number(e.target.value))}
         placeholder="0"
-        className={`${compact ? "w-9 text-sm" : "w-12 text-base"} rounded border border-input bg-background px-1 py-1 text-center outline-none focus:border-accent`}
+        className={`${compact ? "w-8 text-xs" : "w-12 text-base"} rounded border border-input bg-background px-0.5 py-1 text-center outline-none focus:border-accent`}
       />
       <button
         type="button"
@@ -36,14 +37,66 @@ export function QtyControl({
         onClick={() => onChange(value + 1)}
         className={`flex ${btn} shrink-0 items-center justify-center rounded border border-input bg-background`}
       >
-        <Plus className="h-3.5 w-3.5" />
+        <Plus className="h-3 w-3" />
       </button>
     </div>
   );
 }
 
 const ROW =
-  "grid grid-cols-[40px_minmax(0,1fr)_46px_40px_46px_96px] items-center gap-1 sm:grid-cols-[72px_minmax(0,1fr)_80px_70px_80px_150px_80px] sm:gap-2";
+  "grid grid-cols-[40px_minmax(0,1fr)_46px_40px_46px_88px] items-center gap-1 sm:grid-cols-[72px_minmax(0,1fr)_80px_70px_80px_150px_80px] sm:gap-2";
+
+function ProductDetailModal({
+  product,
+  onClose,
+}: {
+  product: Product;
+  onClose: () => void;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-sm rounded-xl bg-card p-4 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="text-base font-bold">{product.name}</h3>
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={onClose}
+            className="rounded p-1 text-muted-foreground hover:bg-muted"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        <img
+          src={`/products/${product.slug}.jpg`}
+          alt={product.name}
+          className="mt-3 h-48 w-full rounded-lg border border-border object-cover"
+        />
+        <p className="mt-3 text-sm leading-snug text-muted-foreground">{product.tamil}</p>
+        <div className="mt-3 grid grid-cols-3 gap-2 text-center text-sm">
+          <div className="rounded bg-muted p-2">
+            <div className="text-[10px] uppercase text-muted-foreground">Price</div>
+            <div className="line-through">Rs {product.rate}</div>
+          </div>
+          <div className="rounded bg-muted p-2">
+            <div className="text-[10px] uppercase text-muted-foreground">Unit</div>
+            <div className="font-medium">{product.unit}</div>
+          </div>
+          <div className="rounded bg-muted p-2">
+            <div className="text-[10px] uppercase text-muted-foreground">Offer</div>
+            <div className="font-bold text-primary">Rs {product.price}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function ProductTable({
   cat,
@@ -54,34 +107,55 @@ export function ProductTable({
   qty: Record<number, number>;
   setValue: (id: number, v: number) => void;
 }) {
+  const [selected, setSelected] = useState<Product | null>(null);
+
   return (
     <div className="overflow-hidden rounded-b-md border border-t-0 border-border bg-card">
       <div
         className={`${ROW} bg-muted px-2 py-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground sm:px-3 sm:text-xs`}
       >
-        <span>Image</span>
-        <span>Product Name</span>
-        <span className="text-right">Price</span>
+        <span className="text-center">Image</span>
+        <span className="text-center sm:text-left">Product Name</span>
+        <span className="text-center">Price</span>
         <span className="text-center">Unit</span>
-        <span className="text-right">Discount</span>
+        <span className="text-center">Discount</span>
         <span className="text-center">Quantity</span>
-        <span className="hidden text-right sm:block">Total</span>
+        <span className="hidden text-center sm:block">Total</span>
       </div>
 
       {cat.products.map((p) => {
         const n = qty[p.id] ?? 0;
         return (
           <div key={p.id} className={`${ROW} border-t border-border px-2 py-2 sm:px-3 sm:py-2.5`}>
-            <img
-              src={`/products/${p.slug}.jpg`}
-              alt={p.name}
-              loading="lazy"
-              className="h-10 w-10 rounded border border-border object-cover sm:h-16 sm:w-16"
-            />
+            <button
+              type="button"
+              onClick={() => setSelected(p)}
+              aria-label={`View details of ${p.name}`}
+              className="mx-auto block"
+            >
+              <img
+                src={`/products/${p.slug}.jpg`}
+                alt={p.name}
+                loading="lazy"
+                className="h-10 w-10 rounded border border-border object-cover sm:h-16 sm:w-16"
+              />
+            </button>
 
-            <div className="min-w-0">
-              <div className="text-xs font-semibold leading-tight sm:text-sm">{p.name}</div>
-              <div className="truncate text-[10px] text-muted-foreground sm:text-xs">{p.tamil}</div>
+            <div className="min-w-0 text-center sm:text-left">
+              <button
+                type="button"
+                onClick={() => setSelected(p)}
+                className="w-full text-left text-xs font-semibold leading-tight sm:text-sm"
+              >
+                {p.name}
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelected(p)}
+                className="w-full truncate text-left text-[10px] text-muted-foreground sm:text-xs"
+              >
+                {p.tamil}
+              </button>
               {n > 0 && (
                 <div className="text-[10px] font-semibold text-primary sm:hidden">
                   Total Rs {n * p.price}
@@ -89,24 +163,28 @@ export function ProductTable({
               )}
             </div>
 
-            <span className="text-right text-[11px] text-muted-foreground line-through sm:text-sm">
+            <span className="text-center text-[11px] text-muted-foreground line-through sm:text-sm">
               {p.rate}
             </span>
             <span className="text-center text-[10px] leading-tight text-muted-foreground sm:text-xs">
               {p.unit}
             </span>
-            <span className="text-right text-xs font-bold text-primary sm:text-base">
+            <span className="text-center text-xs font-bold text-primary sm:text-base">
               {p.price}
             </span>
             <span className="flex justify-center">
               <QtyControl value={n} onChange={(v) => setValue(p.id, v)} compact />
             </span>
-            <span className="hidden text-right text-sm font-semibold sm:block">
+            <span className="hidden text-center text-sm font-semibold sm:block">
               {n > 0 ? n * p.price : "-"}
             </span>
           </div>
         );
       })}
+
+      {selected && (
+        <ProductDetailModal product={selected} onClose={() => setSelected(null)} />
+      )}
     </div>
   );
 }

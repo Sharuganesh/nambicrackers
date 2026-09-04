@@ -32,15 +32,20 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
 
   // Mobile hardware / gesture back closes the cart instead of leaving the site.
   useEffect(() => {
-    window.history.pushState({ cart: true }, "");
+    const cartId = `cart-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    window.history.pushState({ cartId }, "");
     const onPop = () => {
+      // Ignore pops that land back on our own entry (dev double-mount).
+      if (window.history.state?.cartId === cartId) return;
       closedByBack.current = true;
       onClose();
     };
     window.addEventListener("popstate", onPop);
     return () => {
       window.removeEventListener("popstate", onPop);
-      if (!closedByBack.current && window.history.state?.cart) window.history.back();
+      if (!closedByBack.current && window.history.state?.cartId === cartId) {
+        window.history.back();
+      }
     };
   }, [onClose]);
 

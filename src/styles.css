@@ -118,3 +118,22 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
+
+@keyframes float-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@utility float-bob {
+  animation: float-bob 2.6s ease-in-out infinite;
+}
+
+@utility float-bob-delay {
+  animation: float-bob 2.6s ease-in-out infinite;
+  animation-delay: 0.6s;
+}

@@ -30,7 +30,8 @@ var HEADERS = [
   'Total Qty',
   'MRP Total',
   'Discount',
-  'Total Amount'
+  'Total Amount',
+  'Status'
 ];
 
 function doGet(e) {
@@ -83,8 +84,11 @@ function handleRequest(e) {
       params.totalQty || '',
       params.mrpTotal || '',
       params.discountAmount || '',
-      params.totalAmount || ''
+      params.totalAmount || '',
+      'Confirmed'
     ]);
+
+    applyStatusValidation_(sheet, row);
 
     var newRow = sheet.getRange(row, 1, 1, HEADERS.length);
     newRow.setVerticalAlignment('top');
@@ -166,6 +170,15 @@ function getSheet_() {
     sheet.setFrozenRows(1);
   }
 
+  var headerRow = sheet.getRange(1, 1, 1, Math.max(sheet.getLastColumn(), HEADERS.length));
+  if (String(headerRow.getValues()[0][HEADERS.length - 1] || '') !== 'Status') {
+    sheet
+      .getRange(1, HEADERS.length)
+      .setValue('Status')
+      .setFontWeight('bold')
+      .setBackground('#f3e5c0');
+  }
+
   if (sheet.getColumnWidth(10) < 200) {
     sheet.setColumnWidth(10, 320);
   }
@@ -195,13 +208,24 @@ function listOrders_() {
         pincode: String(r[8] || ''),
         items: String(r[9] || ''),
         totalQty: String(r[10] || ''),
-        totalAmount: String(r[13] || '')
+        totalAmount: String(r[13] || ''),
+        status: String(r[14] || 'Confirmed')
       });
     }
     return json_({ success: true, orders: orders });
   } catch (err) {
     return json_({ success: false, error: String(err) });
   }
+}
+
+var STATUSES = ['Confirmed', 'In Transit', 'Delivered'];
+
+function applyStatusValidation_(sheet, row) {
+  var rule = SpreadsheetApp.newDataValidation()
+    .requireValueInList(STATUSES, true)
+    .setAllowInvalid(false)
+    .build();
+  sheet.getRange(row, HEADERS.length).setDataValidation(rule);
 }
 
 function json_(obj) {

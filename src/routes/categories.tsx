@@ -16,12 +16,12 @@ export const Route = createFileRoute("/categories")({
       {
         name: "description",
         content:
-          "Browse all Sivakasi crackers categories — sparklers, flower pots, sky shots, rockets, gift boxes and more at 90% off.",
+          "Browse all crackers categories — sparklers, flower pots, sky shots, rockets, gift boxes and more at 90% off.",
       },
       { property: "og:title", content: "Crackers Categories | Nambi Crackers" },
       {
         property: "og:description",
-        content: "All Sivakasi crackers categories with 90% off price list 2026.",
+        content: "All crackers categories with 90% discount price list 2026.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

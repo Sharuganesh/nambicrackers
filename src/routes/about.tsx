@@ -40,7 +40,7 @@ function About() {
 
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
           {[
-            { t: "Best Price", d: "Direct from Sivakasi factories at 90% off MRP." },
+            { t: "Best Price", d: "Crackers discount at 90% off MRP." },
             { t: "Safe Packing", d: "Carefully packed and dispatched for a safe journey." },
             { t: "Fast Delivery", d: "Quick doorstep delivery across Tamil Nadu." },
           ].map((c) => (

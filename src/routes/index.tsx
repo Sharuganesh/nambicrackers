@@ -23,7 +23,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "Direct-from-factory Sivakasi crackers at 90% off. Browse the full price list and order online.",
+          "Crackers discount at 90%. Browse the full price list and order online.",
       },
     ],
   }),

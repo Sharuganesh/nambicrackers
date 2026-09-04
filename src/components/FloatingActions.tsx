@@ -26,9 +26,9 @@ export function FloatingActions({
         <a
           href={`tel:+91${SHOP.phone}`}
           aria-label="Call us"
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xl"
+          className="float-bob-delay flex h-11 w-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xl"
         >
-          <Phone className="h-6 w-6" />
+          <Phone className="h-5 w-5" />
         </a>
       </div>
 

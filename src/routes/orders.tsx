@@ -29,6 +29,7 @@ type Order = {
   items: string;
   totalQty: string;
   totalAmount: string;
+  status?: string;
 };
 
 async function fetchOrders(): Promise<Order[]> {
@@ -154,6 +155,17 @@ function OrdersDashboard() {
                       </span>
                     </h2>
                     <p className="text-xs text-muted-foreground">{o.timestamp}</p>
+                    <span
+                      className={`mt-1 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                        (o.status || "Confirmed") === "Delivered"
+                          ? "bg-green-100 text-green-700"
+                          : (o.status || "Confirmed") === "In Transit"
+                            ? "bg-amber-100 text-amber-700"
+                            : "bg-blue-100 text-blue-700"
+                      }`}
+                    >
+                      {o.status || "Confirmed"}
+                    </span>
                   </div>
                   <div className="flex gap-2">
                     {waLink && (

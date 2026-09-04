@@ -29,6 +29,7 @@ type Order = {
   items: string;
   totalQty: string;
   totalAmount: string;
+  status?: string;
 };
 
 async function fetchOrders(): Promise<Order[]> {

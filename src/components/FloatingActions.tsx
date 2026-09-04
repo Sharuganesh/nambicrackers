@@ -32,12 +32,12 @@ export function FloatingActions({
         </a>
       </div>
 
-      {/* Cart: middle of the right side */}
+      {/* Cart: aligned with the minimum-order badge on mobile, centered on desktop */}
       {onCart && (
         <button
           onClick={onCart}
           aria-label="Open cart"
-          className="btn-gold fixed right-3 top-1/2 z-40 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full shadow-xl"
+          className="btn-gold fixed right-3 top-[19rem] z-40 flex h-14 w-14 translate-y-0 items-center justify-center rounded-full shadow-xl sm:top-1/2 sm:-translate-y-1/2"
         >
           <ShoppingCart className="h-6 w-6" />
           {!!totalQty && totalQty > 0 && (

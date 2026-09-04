@@ -44,6 +44,9 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
     return () => {
       window.removeEventListener("popstate", onPop);
       if (!closedByBack.current && window.history.state?.cartId === cartId) {
+        // Swallow the popstate caused by our own cleanup.
+        const skip = (e: PopStateEvent) => e.stopImmediatePropagation();
+        window.addEventListener("popstate", skip, { capture: true, once: true });
         window.history.back();
       }
     };

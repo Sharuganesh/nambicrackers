@@ -9,13 +9,16 @@
  * 4. Copy the /exec URL and paste it into src/config.ts (APPS_SCRIPT_URL).
  *
  * Both doGet(e) and doPost(e) are handled. Orders are appended to the
- * "Responses" tab, which is created with bold headers if missing.
+ * "Responses" tab and the invoice PDF is emailed to the shop and customer.
  */
 
 var SHEET_NAME = 'Responses';
+var SHOP_EMAIL = 'nambicrackersorder@gmail.com';
+var SHOP_NAME = 'Nambi Crackers';
 
 var HEADERS = [
   'Timestamp',
+  'Order ID',
   'Name',
   'Mobile',
   'Email',
@@ -25,6 +28,8 @@ var HEADERS = [
   'Pincode',
   'Order Items',
   'Total Qty',
+  'MRP Total',
+  'Discount',
   'Total Amount'
 ];
 
@@ -43,12 +48,10 @@ function handleRequest(e) {
   try {
     var params = {};
 
-    // Query string params (used by the website)
     if (e && e.parameter) {
       for (var k in e.parameter) params[k] = e.parameter[k];
     }
 
-    // JSON body support (optional)
     if (e && e.postData && e.postData.contents) {
       try {
         var body = JSON.parse(e.postData.contents);
@@ -58,16 +61,17 @@ function handleRequest(e) {
 
     var sheet = getSheet_();
 
-    // Normalise item separators so every product lands on its own line
-    // inside the cell (website may send " | " or newlines).
     var items = String(params.items || '')
       .split(/\s*\|\s*|\r?\n/)
       .filter(function (s) { return s !== ''; })
       .join(String.fromCharCode(10));
 
+    var orderId = params.orderId || ('ORD-' + Utilities.formatDate(new Date(), 'Asia/Kolkata', 'yyMMdd-HHmmss'));
+
     var row = sheet.getLastRow() + 1;
     sheet.appendRow([
       new Date(),
+      orderId,
       params.name || '',
       params.mobile || '',
       params.email || '',
@@ -77,18 +81,71 @@ function handleRequest(e) {
       params.pincode || '',
       items,
       params.totalQty || '',
+      params.mrpTotal || '',
+      params.discountAmount || '',
       params.totalAmount || ''
     ]);
 
-    // Make the new row easy to read: wrap the items cell, top-align the row
     var newRow = sheet.getRange(row, 1, 1, HEADERS.length);
     newRow.setVerticalAlignment('top');
-    sheet.getRange(row, 9).setWrap(true);
+    sheet.getRange(row, 10).setWrap(true);
     sheet.setRowHeight(row, Math.max(21, items.split(String.fromCharCode(10)).length * 16));
 
-    return json_({ success: true });
+    sendInvoiceMails_(params, orderId, items);
+
+    return json_({ success: true, orderId: orderId });
   } catch (err) {
     return json_({ success: false, error: String(err) });
+  }
+}
+
+function sendInvoiceMails_(params, orderId, items) {
+  try {
+    var attachments = [];
+    if (params.pdf) {
+      var blob = Utilities.newBlob(
+        Utilities.base64Decode(params.pdf),
+        'application/pdf',
+        orderId + '-invoice.pdf'
+      );
+      attachments.push(blob);
+    }
+
+    var html =
+      '<div style="font-family:Arial,sans-serif;max-width:600px">' +
+      '<h2 style="background:#1a143c;color:#ffd666;padding:12px 16px;margin:0">' + SHOP_NAME + '</h2>' +
+      '<p><b>Order ID:</b> ' + orderId + '</p>' +
+      '<p><b>Name:</b> ' + (params.name || '') + '<br>' +
+      '<b>Mobile:</b> ' + (params.mobile || '') + '<br>' +
+      '<b>Email:</b> ' + (params.email || '') + '<br>' +
+      '<b>Address:</b> ' + (params.address || '') + ', ' + (params.district || '') + ', ' +
+      (params.state || '') + ' - ' + (params.pincode || '') + '</p>' +
+      '<p><b>Order Items:</b></p><pre style="background:#f6f6f6;padding:10px">' + items + '</pre>' +
+      '<p><b>Total Qty:</b> ' + (params.totalQty || '') + '<br>' +
+      '<b>MRP Total:</b> Rs ' + (params.mrpTotal || '') + '<br>' +
+      '<b>Discount:</b> Rs ' + (params.discountAmount || '') + '<br>' +
+      '<b>Net Total:</b> Rs ' + (params.totalAmount || '') + '</p>' +
+      '<p>The full invoice is attached as a PDF.</p>' +
+      '</div>';
+
+    MailApp.sendEmail({
+      to: SHOP_EMAIL,
+      subject: 'New Order ' + orderId + ' - ' + (params.name || ''),
+      htmlBody: html,
+      attachments: attachments
+    });
+
+    if (params.email) {
+      MailApp.sendEmail({
+        to: params.email,
+        subject: SHOP_NAME + ' - Order ' + orderId + ' received',
+        htmlBody:
+          '<p>Thank you for your order with ' + SHOP_NAME + '.</p>' + html,
+        attachments: attachments
+      });
+    }
+  } catch (mailErr) {
+    // mailing must never break the order save
   }
 }
 
@@ -109,9 +166,8 @@ function getSheet_() {
     sheet.setFrozenRows(1);
   }
 
-  // Keep the Order Items column readable (applies to existing tabs too)
-  if (sheet.getColumnWidth(9) < 200) {
-    sheet.setColumnWidth(9, 320);
+  if (sheet.getColumnWidth(10) < 200) {
+    sheet.setColumnWidth(10, 320);
   }
 
   return sheet;
@@ -129,16 +185,17 @@ function listOrders_() {
       var r = values[i];
       orders.push({
         timestamp: r[0] ? Utilities.formatDate(new Date(r[0]), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a') : '',
-        name: String(r[1] || ''),
-        mobile: String(r[2] || ''),
-        email: String(r[3] || ''),
-        address: String(r[4] || ''),
-        district: String(r[5] || ''),
-        state: String(r[6] || ''),
-        pincode: String(r[7] || ''),
-        items: String(r[8] || ''),
-        totalQty: String(r[9] || ''),
-        totalAmount: String(r[10] || '')
+        orderId: String(r[1] || ''),
+        name: String(r[2] || ''),
+        mobile: String(r[3] || ''),
+        email: String(r[4] || ''),
+        address: String(r[5] || ''),
+        district: String(r[6] || ''),
+        state: String(r[7] || ''),
+        pincode: String(r[8] || ''),
+        items: String(r[9] || ''),
+        totalQty: String(r[10] || ''),
+        totalAmount: String(r[13] || '')
       });
     }
     return json_({ success: true, orders: orders });

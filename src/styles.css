@@ -151,3 +151,44 @@
 @utility cart-pulse {
   animation: cart-pulse 1.8s ease-in-out infinite;
 }
+
+@keyframes cart-blink {
+  0%,
+  100% {
+    background-image: var(--grad-gold);
+    opacity: 1;
+    box-shadow: 0 0 0 0 oklch(0.78 0.13 82 / 0.7);
+  }
+  25% {
+    background-image: linear-gradient(100deg, oklch(0.36 0.15 20), oklch(0.5 0.15 25));
+    opacity: 0.95;
+  }
+  50% {
+    background-image: var(--grad-gold);
+    opacity: 0.85;
+    box-shadow: 0 0 0 12px oklch(0.78 0.13 82 / 0);
+  }
+  75% {
+    background-image: linear-gradient(100deg, oklch(0.55 0.18 140), oklch(0.4 0.15 145));
+    opacity: 0.95;
+  }
+}
+
+@utility cart-blink {
+  animation: cart-blink 2.2s ease-in-out infinite;
+}
+
+@keyframes slide-in-right {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@utility slide-in-right {
+  animation: slide-in-right 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

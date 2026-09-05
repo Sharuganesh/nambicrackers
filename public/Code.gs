@@ -102,16 +102,20 @@ function handleRequest(e) {
       params.mrpTotal || '',
       params.discountAmount || '',
       params.totalAmount || '',
-      'Confirmed',
-      params.city || ''
+      params.city || '',
+      'Confirmed'
     ]);
 
     applyStatusValidation_(sheet, row);
 
     var newRow = sheet.getRange(row, 1, 1, HEADERS.length);
-    newRow.setVerticalAlignment('top');
+    newRow
+      .setVerticalAlignment('top')
+      .setBackground(row % 2 === 0 ? C_CREAM : C_CREAM_ALT)
+      .setBorder(true, true, true, true, true, true, '#e6dcc4', SpreadsheetApp.BorderStyle.SOLID);
     sheet.getRange(row, 10).setWrap(true);
     sheet.setRowHeight(row, Math.max(21, items.split(String.fromCharCode(10)).length * 16));
+    colorStatus_(sheet.getRange(row, STATUS_COL), 'Confirmed');
 
     var mail = sendInvoiceMails_(params, orderId, items);
 

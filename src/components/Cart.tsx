@@ -33,6 +33,7 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const closedByBack = useRef(false);
+  const formRef = useRef<HTMLDivElement>(null);
 
   // Mobile hardware / gesture back closes the cart instead of leaving the site.
   useEffect(() => {

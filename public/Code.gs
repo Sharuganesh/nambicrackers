@@ -16,7 +16,7 @@ var SHEET_NAME = 'Responses';
 var SHOP_EMAIL = 'nambicrackersorder@gmail.com';
 var SHOP_NAME = 'Nambi Crackers';
 
-var STATUS_COL = 15; // 1-indexed column of 'Status'
+var STATUS_COL = 16; // 1-indexed column of 'Status' (last column)
 var HEADERS = [
   'Timestamp',
   'Order ID',
@@ -32,9 +32,20 @@ var HEADERS = [
   'MRP Total',
   'Discount',
   'Total Amount',
-  'Status',
-  'City'
+  'City',
+  'Status'
 ];
+
+// Brand colours
+var C_MAROON = '#7a1420';
+var C_GOLD = '#c9a24d';
+var C_CREAM = '#fffdf8';
+var C_CREAM_ALT = '#faf3e3';
+var STATUS_COLORS = {
+  'Confirmed': { bg: '#fff3cd', fg: '#7a5c00' },
+  'In Transit': { bg: '#dbeafe', fg: '#1e40af' },
+  'Delivered': { bg: '#dcfce7', fg: '#166534' }
+};
 
 
 function doGet(e) {

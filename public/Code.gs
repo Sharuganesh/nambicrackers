@@ -263,7 +263,7 @@ function trackOrders_(query) {
         items: String(r[9] || ''),
         totalQty: String(r[10] || ''),
         totalAmount: String(r[13] || ''),
-        status: String(r[14] || 'Confirmed')
+        status: String(r[15] || 'Confirmed')
       });
     }
     return json_({ success: true, orders: orders });
@@ -282,28 +282,40 @@ function getSheet_() {
 
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(HEADERS);
-    sheet
-      .getRange(1, 1, 1, HEADERS.length)
-      .setFontWeight('bold')
-      .setBackground('#f3e5c0');
     sheet.setFrozenRows(1);
   }
 
-  var headerRow = sheet.getRange(1, 1, 1, Math.max(sheet.getLastColumn(), HEADERS.length));
-  var hv = headerRow.getValues()[0];
-  if (String(hv[STATUS_COL - 1] || '') !== 'Status') {
-    sheet
-      .getRange(1, STATUS_COL)
-      .setValue('Status')
-      .setFontWeight('bold')
-      .setBackground('#f3e5c0');
+  // One-time migration: old layout had Status at col 15, City at col 16.
+  // Move the whole Status column to the last position.
+  var hv = sheet.getRange(1, 1, 1, Math.max(sheet.getLastColumn(), HEADERS.length)).getValues()[0];
+  if (String(hv[14] || '') === 'Status' && String(hv[15] || '') === 'City') {
+    var maxRows = sheet.getMaxRows();
+    sheet.getRange(1, 15, maxRows, 1).moveTo(sheet.getRange(1, 17, maxRows, 1));
+    sheet.deleteColumn(15);
+    hv = sheet.getRange(1, 1, 1, Math.max(sheet.getLastColumn(), HEADERS.length)).getValues()[0];
   }
-  if (String(hv[HEADERS.length - 1] || '') !== 'City') {
-    sheet
-      .getRange(1, HEADERS.length)
-      .setValue('City')
-      .setFontWeight('bold')
-      .setBackground('#f3e5c0');
+
+  // Ensure Status header exists at the last column
+  if (String(hv[STATUS_COL - 1] || '') !== 'Status') {
+    sheet.getRange(1, STATUS_COL).setValue('Status');
+  }
+
+  // Professional header: maroon background, white bold text, gold underline
+  sheet
+    .getRange(1, 1, 1, HEADERS.length)
+    .setFontWeight('bold')
+    .setFontColor('#ffffff')
+    .setBackground(C_MAROON)
+    .setHorizontalAlignment('center')
+    .setBorder(false, false, true, false, false, false, C_GOLD, SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
+
+  // Colour the status cells of existing rows
+  var lastRow = sheet.getLastRow();
+  if (lastRow > 1) {
+    var statusVals = sheet.getRange(2, STATUS_COL, lastRow - 1, 1).getValues();
+    for (var i = 0; i < statusVals.length; i++) {
+      colorStatus_(sheet.getRange(i + 2, STATUS_COL), String(statusVals[i][0] || 'Confirmed'));
+    }
   }
 
   if (sheet.getColumnWidth(10) < 200) {
@@ -311,6 +323,30 @@ function getSheet_() {
   }
 
   return sheet;
+}
+
+/** Colours a status cell based on its value. */
+function colorStatus_(range, value) {
+  var c = STATUS_COLORS[value] || STATUS_COLORS['Confirmed'];
+  if (!value) value = 'Confirmed';
+  range
+    .setValue(value)
+    .setBackground(c.bg)
+    .setFontColor(c.fg)
+    .setFontWeight('bold')
+    .setHorizontalAlignment('center');
+}
+
+/** Simple trigger: recolour the Status cell when you change it in the sheet. */
+function onEdit(e) {
+  try {
+    var range = e.range;
+    var sheet = range.getSheet();
+    if (sheet.getName() !== SHEET_NAME) return;
+    if (range.getColumn() === STATUS_COL && range.getRow() > 1) {
+      colorStatus_(range, String(range.getValue() || 'Confirmed'));
+    }
+  } catch (ignore) {}
 }
 
 function listOrders_() {

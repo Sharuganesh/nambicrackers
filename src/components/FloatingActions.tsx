@@ -11,7 +11,8 @@ export function FloatingActions({
   return (
     <>
       {/* Left side: WhatsApp on top, Call below */}
-      <div className="fixed bottom-24 left-3 z-40 flex flex-col gap-2.5">
+      <div className="fixed bottom-32 left-3 z-40 flex flex-col gap-2.5">
+
         <a
           href={`https://wa.me/91${SHOP.phone}`}
           target="_blank"

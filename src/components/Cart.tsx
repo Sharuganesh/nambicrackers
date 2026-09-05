@@ -3,6 +3,7 @@ import { Trash2, X } from "lucide-react";
 import { APPS_SCRIPT_URL, SHOP } from "@/config";
 import type { Product } from "@/data/products";
 import { invoiceBase64, makeOrderId, type InvoiceData } from "@/lib/invoice";
+import { QtyControl } from "./ProductTable";
 
 export type CartLine = Product & { qty: number };
 
@@ -157,7 +158,10 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-ink/60">
-      <div className="flex h-full w-full max-w-md flex-col bg-background shadow-2xl">
+      <form
+        onSubmit={submit}
+        className="flex h-full w-full max-w-md flex-col bg-background shadow-2xl"
+      >
         <div className="surface-royal flex items-center justify-between px-4 py-3">
           <h2 className="text-lg font-bold">Cart</h2>
           <button type="button" onClick={onClose} aria-label="Close cart">
@@ -169,6 +173,7 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
           Packing Charges Free
         </div>
 
+        {/* Scrollable items + form */}
         <div className="flex-1 overflow-y-auto px-4 py-4">
           {lines.length === 0 && (
             <p className="py-16 text-center text-muted-foreground">Your cart is empty.</p>
@@ -203,15 +208,12 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
                   <div className="text-xs text-muted-foreground">
                     Price : {l.price} &middot; Qty : {l.qty}
                   </div>
+                  <div className="text-xs font-semibold text-primary">
+                    Total Rs {(l.qty * l.price).toLocaleString("en-IN")}
+                  </div>
                 </div>
-                <div className="flex flex-col items-end gap-1">
-                  <input
-                    type="number"
-                    min={1}
-                    value={l.qty}
-                    onChange={(e) => setQty(l.id, Number(e.target.value))}
-                    className="w-14 rounded border border-input bg-background px-1 py-1 text-center text-sm"
-                  />
+                <div className="flex flex-col items-end gap-1.5">
+                  <QtyControl value={l.qty} onChange={(v) => setQty(l.id, v)} compact />
                   <button
                     type="button"
                     onClick={() => setQty(l.id, 0)}
@@ -224,7 +226,31 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
             ))}
           </div>
 
-          <div className="mt-4 rounded-xl border border-gold/60 bg-secondary px-4 py-3 text-sm shadow-sm">
+          <div className="mt-5 space-y-3">
+            <h3 className="text-center text-lg font-bold">Submit your details</h3>
+            <p className="text-center text-xs font-semibold text-muted-foreground">
+              Minimum Order Value {SHOP.minOrder}
+            </p>
+            {field("Enter Name", "name")}
+            {field("Mobile Number", "mobile", "tel")}
+            {field("Email ID", "email", "email")}
+            {field("Delivery Address", "address")}
+            {field("City", "city")}
+            {field("District", "district")}
+            {field("State", "state")}
+            {field("Pincode", "pincode")}
+          </div>
+
+          {error && (
+            <p className="mt-4 rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              {error}
+            </p>
+          )}
+        </div>
+
+        {/* Sticky bottom summary + actions */}
+        <div className="border-t border-border bg-background px-4 py-3 shadow-[0_-6px_20px_-12px_rgba(0,0,0,0.3)]">
+          <div className="rounded-xl border border-gold/60 bg-secondary px-4 py-3 text-sm shadow-sm">
             <div className="flex justify-between py-0.5">
               <span className="font-medium">Subtotal</span>
               <span className="font-semibold">Rs {mrpTotal.toLocaleString("en-IN")}</span>
@@ -243,47 +269,25 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
             </div>
           </div>
 
-          <form onSubmit={submit} className="mt-5 space-y-3">
-            <h3 className="text-center text-lg font-bold">Submit your details</h3>
-            <p className="text-center text-xs font-semibold text-muted-foreground">
-              Minimum Order Value {SHOP.minOrder}
-            </p>
-            {field("Enter Name", "name")}
-            {field("Mobile Number", "mobile", "tel")}
-            {field("Email ID", "email", "email")}
-            {field("Delivery Address", "address")}
-            {field("City", "city")}
-            {field("District", "district")}
-            {field("State", "state")}
-            {field("Pincode", "pincode")}
-
-
-            {error && (
-              <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-                {error}
-              </p>
-            )}
-
-            <div className="flex gap-2 pb-6">
-              <button
-                type="button"
-                onClick={whatsapp}
-                disabled={lines.length === 0}
-                className="flex-1 rounded-md bg-[#25D366] px-4 py-3 text-sm font-semibold text-white disabled:opacity-50"
-              >
-                WhatsApp
-              </button>
-              <button
-                type="submit"
-                disabled={sending || lines.length === 0}
-                className="btn-gold hover:btn-gold-hover flex-1 px-4 py-3 text-sm disabled:opacity-50"
-              >
-                {sending ? "Sending..." : "Place Order"}
-              </button>
-            </div>
-          </form>
+          <div className="mt-3 flex gap-2">
+            <button
+              type="button"
+              onClick={whatsapp}
+              disabled={lines.length === 0}
+              className="flex-1 rounded-md bg-[#25D366] px-4 py-3 text-sm font-semibold text-white disabled:opacity-50"
+            >
+              WhatsApp
+            </button>
+            <button
+              type="submit"
+              disabled={sending || lines.length === 0}
+              className="btn-gold hover:btn-gold-hover flex-1 px-4 py-3 text-sm disabled:opacity-50"
+            >
+              {sending ? "Sending..." : "Place Order"}
+            </button>
+          </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

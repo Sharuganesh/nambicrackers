@@ -84,13 +84,15 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
     if (!form.name.trim()) return "Please enter your name.";
     if (!/^\d{10}$/.test(form.mobile.trim())) return "Please enter a valid 10 digit mobile number.";
     if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) return "Please enter a valid email id.";
-    if (!form.address.trim()) return "Please enter your address.";
-    if (!form.district.trim()) return "Please enter your city / district.";
+    if (!form.address.trim()) return "Please enter your delivery address.";
+    if (!form.city.trim()) return "Please enter your city.";
+    if (!form.district.trim()) return "Please enter your district.";
     if (!form.state.trim()) return "Please enter your state.";
     if (!/^\d{6}$/.test(form.pincode.trim())) return "Please enter a valid 6 digit pincode.";
     if (belowMin) return `Minimum order value is Rs ${SHOP.minOrder}.`;
     return "";
   };
+
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();

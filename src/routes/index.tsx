@@ -149,13 +149,16 @@ function Index() {
             <p className="mt-2 text-sm text-muted-foreground">
               Thank you! Your enquiry has been received.
             </p>
-            <div className="mt-4 rounded-xl border border-green-200 bg-green-50 px-4 py-4">
-              <div className="text-xs uppercase tracking-wide text-muted-foreground">
-                Enquiry Number
+            <div className="mt-4 rounded-xl border border-gold/60 bg-secondary px-4 py-4">
+              <div className="text-xs text-muted-foreground">
+                Order ID: <span className="font-semibold text-primary">{done.orderId}</span>
               </div>
-              <div className="text-2xl font-bold text-green-700">{done.orderId}</div>
-              <div className="mt-1 text-sm">Total: Rs {done.netTotal}</div>
+              <div className="mt-1 text-xs uppercase tracking-wide text-muted-foreground">Total</div>
+              <div className="text-2xl font-extrabold text-primary">
+                Rs {done.netTotal.toLocaleString("en-IN")}
+              </div>
             </div>
+
             <p className="mt-4 text-sm text-muted-foreground">
               Our team will verify your enquiry and contact you via email or WhatsApp with payment
               and delivery details. The invoice has been emailed to you.

@@ -24,7 +24,7 @@ export function SiteHeader() {
           height={40}
         />
         <div className="min-w-0">
-          <p className="truncate font-display text-base font-bold uppercase tracking-[0.08em] text-gold sm:text-xl">
+          <p className="truncate font-display text-base font-bold uppercase tracking-[0.08em] text-white sm:text-xl">
             Nambi Crackers
           </p>
         </div>

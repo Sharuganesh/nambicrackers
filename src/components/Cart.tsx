@@ -165,7 +165,7 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
       >
         {sending && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/85">
-            <CrackerLoader label="Lighting up your order..." />
+            <CrackerLoader variant="order" label="Lighting up your order..." />
           </div>
         )}
         <div className="surface-royal flex items-center justify-between px-4 py-3">

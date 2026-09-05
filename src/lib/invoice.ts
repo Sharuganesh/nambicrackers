@@ -256,7 +256,7 @@ export async function buildInvoice(data: InvoiceData): Promise<jsPDF> {
   doc.setLineWidth(1);
   doc.line(W / 2 - 60, cy + 30, W / 2 + 60, cy + 30);
 
-  /* ---------- Diwali wish & safety notes ---------- */
+  /* ---------- Diwali wish ---------- */
   const wishY = cy + 52;
   doc.setFont("helvetica", "bolditalic");
   doc.setFontSize(10);
@@ -267,35 +267,6 @@ export async function buildInvoice(data: InvoiceData): Promise<jsPDF> {
     wishY,
     { align: "center" }
   );
-
-  const tipsY = wishY + 22;
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(9.5);
-  doc.setTextColor(...MAROON_DARK);
-  doc.text("Safe Cracker Usage:", W / 2, tipsY, { align: "center" });
-
-  const tips = [
-    "Read the label instructions before lighting any cracker.",
-    "Use crackers only in open areas, away from buildings and vehicles.",
-    "Keep a bucket of water or sand nearby for emergencies.",
-    "Light at arm's length and move back quickly to a safe distance.",
-    "Never hold crackers in your hand while lighting them.",
-    "Supervise children at all times and keep pets away.",
-  ];
-
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8.5);
-  doc.setTextColor(...MUTED);
-  let tipY = tipsY + 16;
-  tips.forEach((tip) => {
-    if (tipY + 12 > H - M) {
-      doc.addPage();
-      tipY = 40;
-    }
-    const wrapped = doc.splitTextToSize(`• ${tip}`, innerW - 40);
-    doc.text(wrapped, W / 2, tipY, { align: "center" });
-    tipY += (wrapped.length * 10) + 4;
-  });
 
   return doc;
 }

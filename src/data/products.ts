@@ -345,15 +345,6 @@ export const CATEGORIES: Category[] = [
       p("30 Cm Crackling Comets", "30 செ.மீ க்ராக்லிங் காமெட்ஸ்", 1750, "1 Box"),
     ],
   },
-  {
-    name: "Colour Matches",
-    products: [
-      p("Classic 5 in 1 (10 Boxes)", "கிளாசிக்", 1200, "1 Box"),
-      p("7up Rainbow (10 Boxes)", "7அப் ரெயின்போ", 1600, "1 Box"),
-      p("Sony's Men in Blank (Ring Gun)", "ரிங் கன்", 1200, "1 Box"),
-      p("Super Deluxe Matches 10 in 1", "சூப்பர் டீலக்ஸ்", 850, "1 Box"),
-    ],
-  },
 ];
 
 export const ALL_PRODUCTS: Product[] = CATEGORIES.flatMap((c) => c.products);

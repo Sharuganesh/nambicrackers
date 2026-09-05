@@ -19,10 +19,12 @@ const EMPTY = {
   mobile: "",
   email: "",
   address: "",
+  city: "",
   district: "",
   state: "",
   pincode: "",
 };
+
 
 export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
   const [form, setForm] = useState(EMPTY);

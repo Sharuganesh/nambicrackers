@@ -33,16 +33,23 @@ function About() {
       <main className="mx-auto max-w-3xl px-4 py-10">
         <h1 className="text-2xl font-bold text-primary sm:text-3xl">About Us</h1>
         <p className="mt-4 text-base leading-relaxed text-foreground">
-          Buy crackers online at the best price! We supply a wide range of products throughout the
-          year for all festivals and celebrations. Fast, safe delivery to your doorstep. We have the
-          good relationship with our valuable customers.
+          Buy crackers online at the best price! Nambi Crackers is based in Sivakasi, the home of
+          Indian fireworks, and we supply a wide range of products throughout the year for all
+          festivals and celebrations. Fast, safe delivery to your doorstep. We have a good
+          relationship with our valuable customers.
+        </p>
+        <p className="mt-3 text-base leading-relaxed text-foreground">
+          Every item we sell comes directly from licensed Sivakasi manufacturers, so you always pay
+          factory rates without middlemen. Each order is checked by hand before packing, and you
+          receive a clear invoice with an order ID so you can track your parcel from confirmation to
+          delivery.
         </p>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
           {[
-            { t: "Best Price", d: "Crackers discount at 90% off MRP." },
-            { t: "Safe Packing", d: "Carefully packed and dispatched for a safe journey." },
-            { t: "Fast Delivery", d: "Quick doorstep delivery across Tamil Nadu." },
+            { t: "Best Price", d: "Direct factory rates with 90% off MRP - no hidden charges." },
+            { t: "Safe Packing", d: "Every parcel is checked by hand and packed for a safe journey." },
+            { t: "Fast Delivery", d: "Quick doorstep delivery across Tamil Nadu with order tracking." },
           ].map((c) => (
             <div key={c.t} className="rounded-xl border border-border bg-card p-4">
               <h2 className="font-bold text-primary">{c.t}</h2>
@@ -50,6 +57,18 @@ function About() {
             </div>
           ))}
         </div>
+
+        <div className="mt-8 rounded-xl border border-gold/60 bg-card p-5">
+          <h2 className="font-bold text-primary">Why Customers Trust Us</h2>
+          <ul className="mt-2 space-y-2 text-sm text-muted-foreground">
+            <li>Licensed Sivakasi supplier with a real shop address you can visit.</li>
+            <li>Transparent pricing - MRP, discount and total shown before you order.</li>
+            <li>Invoice with a unique order ID emailed to you for every order.</li>
+            <li>Order status you can check any time on our tracking page.</li>
+            <li>Friendly support on phone and WhatsApp before and after delivery.</li>
+          </ul>
+        </div>
+
 
         <div className="mt-8 rounded-xl bg-secondary p-5">
           <h2 className="font-bold text-primary">Visit Our Shop</h2>

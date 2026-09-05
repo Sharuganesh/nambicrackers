@@ -139,21 +139,24 @@ function sendInvoiceMails_(params, orderId, items) {
 
 
     var html =
-      '<div style="font-family:Arial,sans-serif;max-width:600px">' +
-      '<h2 style="background:#1a143c;color:#ffd666;padding:12px 16px;margin:0">' + SHOP_NAME + '</h2>' +
-      '<p><b>Order ID:</b> ' + orderId + '</p>' +
-      '<p><b>Name:</b> ' + (params.name || '') + '<br>' +
-      '<b>Mobile:</b> ' + (params.mobile || '') + '<br>' +
-      '<b>Email:</b> ' + (params.email || '') + '<br>' +
-      '<b>Address:</b> ' + (params.address || '') + ', ' + (params.district || '') + ', ' +
-      (params.state || '') + ' - ' + (params.pincode || '') + '</p>' +
-      '<p><b>Order Items:</b></p><pre style="background:#f6f6f6;padding:10px">' + items + '</pre>' +
-      '<p><b>Total Qty:</b> ' + (params.totalQty || '') + '<br>' +
-      '<b>MRP Total:</b> Rs ' + (params.mrpTotal || '') + '<br>' +
-      '<b>Discount:</b> Rs ' + (params.discountAmount || '') + '<br>' +
-      '<b>Net Total:</b> Rs ' + (params.totalAmount || '') + '</p>' +
-      '<p>The full invoice is attached as a PDF.</p>' +
-      '</div>';
+      '<div style="font-family:Georgia,Arial,sans-serif;max-width:560px;margin:0 auto;' +
+      'background:#fffdf8;border:1px solid #e6dcc4">' +
+      '<div style="background:#7a1420;padding:18px 20px;text-align:center;border-bottom:3px solid #c9a24d">' +
+      '<span style="color:#c9a24d;font-size:20px;font-weight:bold;letter-spacing:2px">NAMBI CRACKERS</span>' +
+      '</div>' +
+      '<div style="padding:22px 24px;color:#2a2222;font-size:14px;line-height:1.7">' +
+      '<p style="margin:0 0 14px">Thank you for your order enquiry.</p>' +
+      '<p style="margin:0 0 4px;color:#6e6664;font-size:13px">Order ID: <b style="color:#7a1420">' +
+      orderId + '</b></p>' +
+      '<p style="margin:0 0 16px;color:#6e6664;font-size:13px">Customer: <b style="color:#2a2222">' +
+      (params.name || '') + '</b></p>' +
+      '<p style="margin:0 0 12px">Your order enquiry has been received successfully. ' +
+      'Our team will contact you to confirm the order, packing and delivery.</p>' +
+      '<p style="margin:0 0 20px">Please refer to the attached PDF for complete order details.</p>' +
+      '<p style="margin:0;text-align:center;color:#7a1420;font-weight:bold">Thanking You!</p>' +
+      '<p style="margin:4px 0 0;text-align:center;color:#7a1420;letter-spacing:1.5px;font-weight:bold">' +
+      'NAMBI CRACKERS</p>' +
+      '</div></div>';
 
     var shopOk = send_(SHOP_EMAIL, 'New Order ' + orderId + ' - ' + (params.name || ''), html, attachments, result);
 
@@ -162,11 +165,12 @@ function sendInvoiceMails_(params, orderId, items) {
       custOk = send_(
         params.email,
         SHOP_NAME + ' - Order ' + orderId + ' received',
-        '<p>Thank you for your order with ' + SHOP_NAME + '.</p>' + html,
+        html,
         attachments,
         result
       );
     }
+
 
     result.sent = shopOk && custOk;
   } catch (mailErr) {

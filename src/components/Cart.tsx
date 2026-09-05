@@ -135,7 +135,7 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
       ...lines.map((l) => `- ${l.name} x ${l.qty} ${l.unit} = Rs.${l.qty * l.price}`),
       "",
       `Total Items: ${totalQty}`,
-      `Net Total: Rs.${netTotal}`,
+      `Total: Rs.${netTotal}`,
       form.name ? `\nName: ${form.name}` : "",
       form.mobile ? `Mobile: ${form.mobile}` : "",
     ]

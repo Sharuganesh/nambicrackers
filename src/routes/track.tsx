@@ -4,6 +4,7 @@ import { CheckCircle2, Circle, Search, Truck, PackageCheck } from "lucide-react"
 import { APPS_SCRIPT_URL, SHOP } from "@/config";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { CrackerLoader } from "@/components/CrackerLoader";
 
 export const Route = createFileRoute("/track")({
   head: () => ({

@@ -3,7 +3,7 @@
  * (Deploy > New deployment > Web app > Anyone).
  */
 export const APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbyCvprovQ9I1OmmN-tkQaqSCNwK_c3HmkjGTZCcocD5nsWdrkjfE9x4cvNDnBE-aV7d/exec";
+  "https://script.google.com/macros/s/AKfycbwykuGAW1I4us0yXfZLXC47wmidOi-HZwMLSQgwm_mX_ciOpZXMGiNdCdMLbMAyLj7_/exec";
 
 
 export const SHOP = {

@@ -103,6 +103,12 @@ function TrackPage() {
           </button>
         </form>
 
+        {loading && (
+          <div className="mt-10 flex justify-center">
+            <CrackerLoader label="Fetching your order status..." />
+          </div>
+        )}
+
         {error && (
           <p className="mx-auto mt-4 max-w-lg rounded-md bg-destructive/10 px-3 py-2 text-center text-sm text-destructive">
             {error}

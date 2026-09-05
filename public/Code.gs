@@ -13,7 +13,7 @@
  */
 
 var SHEET_NAME = 'Responses';
-var SHOP_EMAIL = 'nambicrackersorder@gmail.com';
+var SHOP_EMAIL = 'thirumalainambi36@gmail.com';
 var SHOP_NAME = 'Nambi Crackers';
 
 var STATUS_COL = 16; // 1-indexed column of 'Status' (last column)

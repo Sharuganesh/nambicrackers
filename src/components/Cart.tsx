@@ -130,21 +130,6 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
     }
   };
 
-  const whatsapp = () => {
-    const msg = [
-      `New Order - ${SHOP.name}`,
-      "",
-      ...lines.map((l) => `- ${l.name} x ${l.qty} ${l.unit} = Rs.${l.qty * l.price}`),
-      "",
-      `Total Items: ${totalQty}`,
-      `Total: Rs.${netTotal}`,
-      form.name ? `\nName: ${form.name}` : "",
-      form.mobile ? `Mobile: ${form.mobile}` : "",
-    ]
-      .filter(Boolean)
-      .join("\n");
-    window.open(`https://wa.me/91${SHOP.phone}?text=${encodeURIComponent(msg)}`, "_blank", "noopener");
-  };
 
   const field = (label: string, key: keyof typeof EMPTY, type = "text") => (
     <input
@@ -275,23 +260,22 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
             </div>
           </div>
 
-          <div className="mt-3 flex gap-2">
-            <button
-              type="button"
-              onClick={whatsapp}
-              disabled={lines.length === 0}
-              className="flex-1 rounded-md bg-[#25D366] px-4 py-3 text-sm font-semibold text-white disabled:opacity-50"
-            >
-              WhatsApp
-            </button>
-            <button
-              type="submit"
-              disabled={sending || lines.length === 0}
-              className="btn-gold hover:btn-gold-hover flex-1 px-4 py-3 text-sm disabled:opacity-50"
-            >
-              {sending ? "Placing Order..." : "Place Order"}
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={sending || lines.length === 0}
+            className={`mt-3 w-full rounded-md px-4 py-3.5 text-sm font-bold disabled:opacity-60 ${
+              belowMin
+                ? "border border-gold bg-white text-primary"
+                : "btn-gold hover:btn-gold-hover"
+            }`}
+          >
+            {sending
+              ? "Placing Order..."
+              : belowMin
+                ? `Minimum Order Rs ${SHOP.minOrder}`
+                : "Place Order"}
+          </button>
+
         </div>
       </form>
     </div>

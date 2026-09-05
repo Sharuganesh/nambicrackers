@@ -22,7 +22,7 @@ var HEADERS = [
   'Name',
   'Mobile',
   'Email',
-  'Address',
+  'Delivery Address',
   'District',
   'State',
   'Pincode',
@@ -31,8 +31,10 @@ var HEADERS = [
   'MRP Total',
   'Discount',
   'Total Amount',
-  'Status'
+  'Status',
+  'City'
 ];
+
 
 function doGet(e) {
   if (e && e.parameter && e.parameter.action === 'list') {

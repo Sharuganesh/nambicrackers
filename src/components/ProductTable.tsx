@@ -29,7 +29,7 @@ export function QtyControl({
         value={value === 0 ? "" : value}
         onChange={(e) => onChange(Number(e.target.value))}
         placeholder="0"
-        className={`${compact ? "w-9 text-xs" : "w-12 text-base"} rounded border border-input bg-background px-0.5 py-1 text-center outline-none focus:border-accent`}
+        className={`${compact ? "w-8 text-xs" : "w-12 text-base"} rounded border border-input bg-background px-0.5 py-1 text-center outline-none focus:border-accent`}
       />
       <button
         type="button"
@@ -43,8 +43,9 @@ export function QtyControl({
   );
 }
 
+// Image | Product Name | Price | Unit | Discount | Quantity — aligned on every screen size
 const ROW =
-  "grid grid-cols-[72px_minmax(0,1fr)_80px_70px_80px_150px_80px] items-center gap-2";
+  "grid grid-cols-[56px_minmax(0,1fr)_44px_38px_48px_96px] items-center gap-1.5 sm:grid-cols-[64px_minmax(0,1fr)_56px_48px_60px_110px] sm:gap-2 lg:grid-cols-[80px_minmax(0,1fr)_90px_70px_90px_160px_90px]";
 
 function ProductDetailModal({
   product,
@@ -111,122 +112,75 @@ export function ProductTable({
 
   return (
     <div className="overflow-hidden rounded-b-md border border-t-0 border-border bg-card">
-      {/* ===== Mobile rows (clean stacked layout) ===== */}
-      <div className="lg:hidden">
-        {cat.products.map((p) => {
-          const n = qty[p.id] ?? 0;
-          return (
-            <div
-              key={p.id}
-              className="flex items-center gap-2.5 border-t border-border px-2.5 py-2.5 first:border-t-0"
+      {/* Column header — visible on every device */}
+      <div
+        className={`${ROW} border-b border-border bg-secondary px-2 py-2 text-[9px] font-bold uppercase tracking-wide text-muted-foreground sm:px-3 sm:text-[10px] lg:text-xs`}
+      >
+        <span className="text-center">Image</span>
+        <span className="text-center">Product Name</span>
+        <span className="text-center">Price</span>
+        <span className="text-center">Unit</span>
+        <span className="text-center">Discount</span>
+        <span className="text-center">Quantity</span>
+        <span className="hidden text-center lg:block">Total</span>
+      </div>
+
+      {cat.products.map((p) => {
+        const n = qty[p.id] ?? 0;
+        return (
+          <div
+            key={p.id}
+            className={`${ROW} border-t border-border px-2 py-2 first:border-t-0 sm:px-3 sm:py-2.5`}
+          >
+            <button
+              type="button"
+              onClick={() => setSelected(p)}
+              aria-label={`View details of ${p.name}`}
+              className="mx-auto block"
             >
+              <img
+                src={`/products/${p.slug}.jpg`}
+                alt={p.name}
+                loading="lazy"
+                className="h-12 w-12 rounded border border-border object-cover sm:h-14 sm:w-14 lg:h-16 lg:w-16"
+              />
+            </button>
+
+            <div className="min-w-0 text-center">
               <button
                 type="button"
                 onClick={() => setSelected(p)}
-                aria-label={`View details of ${p.name}`}
-                className="shrink-0"
+                className="w-full text-[12px] font-semibold leading-tight sm:text-sm"
               >
-                <img
-                  src={`/products/${p.slug}.jpg`}
-                  alt={p.name}
-                  loading="lazy"
-                  className="h-14 w-14 rounded border border-border object-cover"
-                />
+                {p.name}
               </button>
-
-              <div className="min-w-0 flex-1">
-                <button
-                  type="button"
-                  onClick={() => setSelected(p)}
-                  className="w-full text-left text-[13px] font-semibold leading-tight"
-                >
-                  {p.name}
-                </button>
-                <div className="truncate text-[11px] text-muted-foreground">{p.tamil}</div>
-                <div className="mt-0.5 flex flex-wrap items-baseline gap-x-1.5 text-[11px]">
-                  <span className="text-muted-foreground line-through">Rs {p.rate}</span>
-                  <span className="text-sm font-bold text-primary">Rs {p.price}</span>
-                  <span className="text-muted-foreground">· {p.unit}</span>
-                </div>
-                {n > 0 && (
-                  <div className="text-[11px] font-semibold text-primary">
-                    Total Rs {(n * p.price).toLocaleString("en-IN")}
-                  </div>
-                )}
-              </div>
-
-              <div className="shrink-0">
-                <QtyControl value={n} onChange={(v) => setValue(p.id, v)} compact />
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* ===== Desktop table ===== */}
-      <div className="hidden lg:block">
-        <div
-          className={`${ROW} bg-muted px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground`}
-        >
-          <span className="text-center">Image</span>
-          <span>Product Name</span>
-          <span className="text-center">Price</span>
-          <span className="text-center">Unit</span>
-          <span className="text-center">Discount</span>
-          <span className="text-center">Quantity</span>
-          <span className="text-center">Total</span>
-        </div>
-
-        {cat.products.map((p) => {
-          const n = qty[p.id] ?? 0;
-          return (
-            <div key={p.id} className={`${ROW} border-t border-border px-3 py-2.5`}>
               <button
                 type="button"
                 onClick={() => setSelected(p)}
-                aria-label={`View details of ${p.name}`}
-                className="mx-auto block"
+                className="w-full truncate text-[10px] text-muted-foreground sm:text-xs"
               >
-                <img
-                  src={`/products/${p.slug}.jpg`}
-                  alt={p.name}
-                  loading="lazy"
-                  className="h-16 w-16 rounded border border-border object-cover"
-                />
+                {p.tamil}
               </button>
-
-              <div className="min-w-0">
-                <button
-                  type="button"
-                  onClick={() => setSelected(p)}
-                  className="w-full text-left text-sm font-semibold leading-tight"
-                >
-                  {p.name}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelected(p)}
-                  className="w-full truncate text-left text-xs text-muted-foreground"
-                >
-                  {p.tamil}
-                </button>
-              </div>
-
-              <span className="text-center text-sm text-muted-foreground line-through">
-                {p.rate}
-              </span>
-              <span className="text-center text-xs text-muted-foreground">{p.unit}</span>
-              <span className="text-center text-base font-bold text-primary">{p.price}</span>
-              <span className="flex justify-center">
-                <QtyControl value={n} onChange={(v) => setValue(p.id, v)} compact />
-              </span>
-              <span className="text-center text-sm font-semibold">
-                {n > 0 ? (n * p.price).toLocaleString("en-IN") : "-"}
-              </span>
             </div>
-          );
-        })}
-      </div>
+
+            <span className="text-center text-[11px] text-muted-foreground line-through sm:text-sm">
+              {p.rate}
+            </span>
+            <span className="text-center text-[10px] text-muted-foreground sm:text-xs">
+              {p.unit}
+            </span>
+            <span className="text-center text-[13px] font-bold text-primary sm:text-base">
+              {p.price}
+            </span>
+            <span className="flex justify-center">
+              <QtyControl value={n} onChange={(v) => setValue(p.id, v)} compact />
+            </span>
+            <span className="hidden text-center text-sm font-semibold lg:block">
+              {n > 0 ? (n * p.price).toLocaleString("en-IN") : "-"}
+            </span>
+          </div>
+        );
+      })}
 
       {selected && (
         <ProductDetailModal product={selected} onClose={() => setSelected(null)} />

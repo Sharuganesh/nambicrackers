@@ -237,11 +237,6 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
             {field("Pincode", "pincode")}
           </div>
 
-          {error && (
-            <p className="mt-4 rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-              {error}
-            </p>
-          )}
         </div>
 
         {/* Sticky bottom summary + actions */}
@@ -282,6 +277,27 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
           </button>
 
         </div>
+
+        {/* Centered error popup */}
+        {error && (
+          <div className="absolute inset-0 z-20 flex items-center justify-center bg-ink/50 px-6">
+            <div className="w-full max-w-xs rounded-xl border border-gold bg-white p-6 text-center shadow-2xl">
+              <p className="text-base font-semibold text-primary">{error}</p>
+              <button
+                type="button"
+                onClick={() => {
+                  setError("");
+                  if (error === "Please fill the delivery details") {
+                    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }
+                }}
+                className="btn-gold hover:btn-gold-hover mt-5 w-full rounded-md px-4 py-2.5 text-sm font-bold"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        )}
       </form>
     </div>
   );

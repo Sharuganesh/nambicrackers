@@ -105,7 +105,7 @@ function TrackPage() {
 
         {loading && (
           <div className="mt-10 flex justify-center">
-            <CrackerLoader label="Fetching your order status..." />
+            <CrackerLoader variant="track" label="Fetching your order status..." />
           </div>
         )}
 

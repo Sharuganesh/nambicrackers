@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 export function CrackerLoader({ label }: { label?: string }) {
   return (
     <div className="flex flex-col items-center gap-3" role="status" aria-live="polite">

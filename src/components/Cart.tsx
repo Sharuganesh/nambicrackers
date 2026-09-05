@@ -222,7 +222,7 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
             ))}
           </div>
 
-          <div className="mt-5 space-y-3">
+          <div ref={formRef} className="mt-5 space-y-3">
             <h3 className="text-center text-lg font-bold">Submit your details</h3>
             <p className="text-center text-xs font-semibold text-muted-foreground">
               Minimum Order Value {SHOP.minOrder}

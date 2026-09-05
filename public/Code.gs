@@ -73,7 +73,7 @@ function handleRequest(e) {
       .filter(function (s) { return s !== ''; })
       .join(String.fromCharCode(10));
 
-    var orderId = params.orderId || ('ORD-' + Utilities.formatDate(new Date(), 'Asia/Kolkata', 'yyMMdd-HHmmss'));
+    var orderId = uniqueOrderId_(sheet, params.orderId);
 
     var row = sheet.getLastRow() + 1;
     sheet.appendRow([

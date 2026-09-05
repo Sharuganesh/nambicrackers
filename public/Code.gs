@@ -372,7 +372,7 @@ function listOrders_() {
         items: String(r[9] || ''),
         totalQty: String(r[10] || ''),
         totalAmount: String(r[13] || ''),
-        status: String(r[14] || 'Confirmed')
+        status: String(r[15] || 'Confirmed')
       });
     }
     return json_({ success: true, orders: orders });

@@ -16,6 +16,7 @@ var SHEET_NAME = 'Responses';
 var SHOP_EMAIL = 'nambicrackersorder@gmail.com';
 var SHOP_NAME = 'Nambi Crackers';
 
+var STATUS_COL = 15; // 1-indexed column of 'Status'
 var HEADERS = [
   'Timestamp',
   'Order ID',
@@ -90,7 +91,8 @@ function handleRequest(e) {
       params.mrpTotal || '',
       params.discountAmount || '',
       params.totalAmount || '',
-      'Confirmed'
+      'Confirmed',
+      params.city || ''
     ]);
 
     applyStatusValidation_(sheet, row);
@@ -250,10 +252,18 @@ function getSheet_() {
   }
 
   var headerRow = sheet.getRange(1, 1, 1, Math.max(sheet.getLastColumn(), HEADERS.length));
-  if (String(headerRow.getValues()[0][HEADERS.length - 1] || '') !== 'Status') {
+  var hv = headerRow.getValues()[0];
+  if (String(hv[STATUS_COL - 1] || '') !== 'Status') {
+    sheet
+      .getRange(1, STATUS_COL)
+      .setValue('Status')
+      .setFontWeight('bold')
+      .setBackground('#f3e5c0');
+  }
+  if (String(hv[HEADERS.length - 1] || '') !== 'City') {
     sheet
       .getRange(1, HEADERS.length)
-      .setValue('Status')
+      .setValue('City')
       .setFontWeight('bold')
       .setBackground('#f3e5c0');
   }
@@ -304,7 +314,7 @@ function applyStatusValidation_(sheet, row) {
     .requireValueInList(STATUSES, true)
     .setAllowInvalid(false)
     .build();
-  sheet.getRange(row, HEADERS.length).setDataValidation(rule);
+  sheet.getRange(row, STATUS_COL).setDataValidation(rule);
 }
 
 function json_(obj) {

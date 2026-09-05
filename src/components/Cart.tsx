@@ -157,10 +157,10 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-ink/60">
+    <div className="fixed inset-0 z-50 flex justify-end bg-ink/60 animate-in fade-in duration-200">
       <form
         onSubmit={submit}
-        className="flex h-full w-full max-w-md flex-col bg-background shadow-2xl"
+        className="slide-in-right flex h-full w-full max-w-md flex-col bg-background shadow-2xl"
       >
         <div className="surface-royal flex items-center justify-between px-4 py-3">
           <h2 className="text-lg font-bold">Cart</h2>

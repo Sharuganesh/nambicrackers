@@ -33,17 +33,16 @@ export function FloatingActions({
         </a>
       </div>
 
-      {/* Cart: gold circle just below the search bar on mobile (category-bar level), centered on desktop */}
+      {/* Cart: square gold button cut at the right screen edge */}
       {onCart && (
         <button
           onClick={onCart}
           aria-label="Open cart"
-          className="cart-pulse btn-gold fixed right-3 top-[7.5rem] z-40 flex h-12 w-12 items-center justify-center rounded-full border-2 border-white p-3 shadow-2xl sm:top-1/2 sm:-translate-y-1/2"
+          className="cart-pulse btn-gold fixed right-0 top-[7.5rem] z-40 flex h-13 w-13 items-center justify-center rounded-l-2xl border-y-2 border-l-2 border-white p-3 pr-4 shadow-2xl sm:right-3 sm:top-1/2 sm:-translate-y-1/2 sm:rounded-full sm:border-2 sm:pr-3"
         >
-
           <ShoppingCart className="h-5 w-5" />
           {!!totalQty && totalQty > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
+            <span className="absolute -left-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground shadow-md">
               {totalQty}
             </span>
           )}

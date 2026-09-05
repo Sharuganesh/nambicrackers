@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
-import { SHOP } from "@/config";
 
 const NAV = [
   { to: "/", label: "Home" },
@@ -16,20 +15,20 @@ export function SiteHeader() {
 
   return (
     <header className="surface-royal sticky top-0 z-30 shadow-lg">
-      <div className="mx-auto flex max-w-5xl items-center gap-3 px-3 py-2.5">
+      <div className="mx-auto flex max-w-5xl items-center gap-3 px-3 py-2">
         <img
           src="/logo.png"
           alt="Nambi Crackers logo"
-          className="h-11 w-11 shrink-0 rounded-full object-contain"
-          width={44}
-          height={44}
+          className="h-10 w-10 shrink-0 rounded-full object-contain"
+          width={40}
+          height={40}
         />
         <div className="min-w-0">
-          <p className="truncate text-base font-bold sm:text-xl">{SHOP.name}</p>
-          <p className="truncate text-[11px] opacity-80 sm:text-xs">
-            Sivakasi &middot; 90% Discount Price List 2026
+          <p className="truncate font-display text-base font-bold uppercase tracking-[0.08em] text-gold sm:text-xl">
+            Nambi Crackers
           </p>
         </div>
+
 
         <nav className="ml-auto hidden items-center gap-1 sm:flex">
           {NAV.map((n) => (

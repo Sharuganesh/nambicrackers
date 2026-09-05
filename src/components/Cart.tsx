@@ -19,10 +19,12 @@ const EMPTY = {
   mobile: "",
   email: "",
   address: "",
+  city: "",
   district: "",
   state: "",
   pincode: "",
 };
+
 
 export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
   const [form, setForm] = useState(EMPTY);
@@ -82,13 +84,15 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
     if (!form.name.trim()) return "Please enter your name.";
     if (!/^\d{10}$/.test(form.mobile.trim())) return "Please enter a valid 10 digit mobile number.";
     if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) return "Please enter a valid email id.";
-    if (!form.address.trim()) return "Please enter your address.";
-    if (!form.district.trim()) return "Please enter your city / district.";
+    if (!form.address.trim()) return "Please enter your delivery address.";
+    if (!form.city.trim()) return "Please enter your city.";
+    if (!form.district.trim()) return "Please enter your district.";
     if (!form.state.trim()) return "Please enter your state.";
     if (!/^\d{6}$/.test(form.pincode.trim())) return "Please enter a valid 6 digit pincode.";
     if (belowMin) return `Minimum order value is Rs ${SHOP.minOrder}.`;
     return "";
   };
+
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -131,7 +135,7 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
       ...lines.map((l) => `- ${l.name} x ${l.qty} ${l.unit} = Rs.${l.qty * l.price}`),
       "",
       `Total Items: ${totalQty}`,
-      `Net Total: Rs.${netTotal}`,
+      `Total: Rs.${netTotal}`,
       form.name ? `\nName: ${form.name}` : "",
       form.mobile ? `Mobile: ${form.mobile}` : "",
     ]
@@ -220,18 +224,22 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
             ))}
           </div>
 
-          <div className="mt-4 space-y-1 rounded-lg bg-muted px-4 py-3 text-sm">
-            <div className="flex justify-between">
-              <span>MRP Total</span>
-              <span>Rs {mrpTotal}</span>
+          <div className="mt-4 rounded-xl border border-gold/60 bg-secondary px-4 py-3 text-sm shadow-sm">
+            <div className="flex justify-between py-0.5">
+              <span className="font-medium">Subtotal</span>
+              <span className="font-semibold">Rs {mrpTotal.toLocaleString("en-IN")}</span>
             </div>
-            <div className="flex justify-between text-green-700">
-              <span>Discount</span>
-              <span>- Rs {discount}</span>
+            <div className="flex justify-between py-0.5 text-green-700">
+              <span className="font-medium">Discount</span>
+              <span className="font-semibold">- Rs {discount.toLocaleString("en-IN")}</span>
             </div>
-            <div className="flex justify-between border-t border-border pt-2 text-base font-bold">
-              <span>Net Total</span>
-              <span className="text-primary">Rs {netTotal}</span>
+            <div className="mt-2 flex items-center justify-between border-t-2 border-gold pt-2">
+              <span className="font-display text-base font-bold uppercase tracking-wide text-primary">
+                Total
+              </span>
+              <span className="text-xl font-extrabold text-primary">
+                Rs {netTotal.toLocaleString("en-IN")}
+              </span>
             </div>
           </div>
 
@@ -242,11 +250,13 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
             </p>
             {field("Enter Name", "name")}
             {field("Mobile Number", "mobile", "tel")}
-            {field("Email id", "email", "email")}
-            {field("Address", "address")}
-            {field("City / District", "district")}
+            {field("Email ID", "email", "email")}
+            {field("Delivery Address", "address")}
+            {field("City", "city")}
+            {field("District", "district")}
             {field("State", "state")}
             {field("Pincode", "pincode")}
+
 
             {error && (
               <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">

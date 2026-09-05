@@ -16,13 +16,14 @@ var SHEET_NAME = 'Responses';
 var SHOP_EMAIL = 'nambicrackersorder@gmail.com';
 var SHOP_NAME = 'Nambi Crackers';
 
+var STATUS_COL = 15; // 1-indexed column of 'Status'
 var HEADERS = [
   'Timestamp',
   'Order ID',
   'Name',
   'Mobile',
   'Email',
-  'Address',
+  'Delivery Address',
   'District',
   'State',
   'Pincode',
@@ -31,8 +32,10 @@ var HEADERS = [
   'MRP Total',
   'Discount',
   'Total Amount',
-  'Status'
+  'Status',
+  'City'
 ];
+
 
 function doGet(e) {
   if (e && e.parameter && e.parameter.action === 'list') {
@@ -70,7 +73,7 @@ function handleRequest(e) {
       .filter(function (s) { return s !== ''; })
       .join(String.fromCharCode(10));
 
-    var orderId = params.orderId || ('ORD-' + Utilities.formatDate(new Date(), 'Asia/Kolkata', 'yyMMdd-HHmmss'));
+    var orderId = uniqueOrderId_(sheet, params.orderId);
 
     var row = sheet.getLastRow() + 1;
     sheet.appendRow([
@@ -88,7 +91,8 @@ function handleRequest(e) {
       params.mrpTotal || '',
       params.discountAmount || '',
       params.totalAmount || '',
-      'Confirmed'
+      'Confirmed',
+      params.city || ''
     ]);
 
     applyStatusValidation_(sheet, row);
@@ -110,6 +114,25 @@ function handleRequest(e) {
   } catch (err) {
     return json_({ success: false, error: String(err) });
   }
+}
+
+/** Ensures a short unique NC-#### order id. */
+function uniqueOrderId_(sheet, requested) {
+  var existing = {};
+  var lastRow = sheet.getLastRow();
+  if (lastRow > 1) {
+    var ids = sheet.getRange(2, 2, lastRow - 1, 1).getValues();
+    for (var i = 0; i < ids.length; i++) existing[String(ids[i][0] || '')] = true;
+  }
+  var id = String(requested || '').trim();
+  if (!id || existing[id]) {
+    var guard = 0;
+    do {
+      id = 'NC-' + Math.floor(1000 + Math.random() * 9000);
+      guard++;
+    } while (existing[id] && guard < 200);
+  }
+  return id;
 }
 
 function sendInvoiceMails_(params, orderId, items) {
@@ -135,21 +158,24 @@ function sendInvoiceMails_(params, orderId, items) {
 
 
     var html =
-      '<div style="font-family:Arial,sans-serif;max-width:600px">' +
-      '<h2 style="background:#1a143c;color:#ffd666;padding:12px 16px;margin:0">' + SHOP_NAME + '</h2>' +
-      '<p><b>Order ID:</b> ' + orderId + '</p>' +
-      '<p><b>Name:</b> ' + (params.name || '') + '<br>' +
-      '<b>Mobile:</b> ' + (params.mobile || '') + '<br>' +
-      '<b>Email:</b> ' + (params.email || '') + '<br>' +
-      '<b>Address:</b> ' + (params.address || '') + ', ' + (params.district || '') + ', ' +
-      (params.state || '') + ' - ' + (params.pincode || '') + '</p>' +
-      '<p><b>Order Items:</b></p><pre style="background:#f6f6f6;padding:10px">' + items + '</pre>' +
-      '<p><b>Total Qty:</b> ' + (params.totalQty || '') + '<br>' +
-      '<b>MRP Total:</b> Rs ' + (params.mrpTotal || '') + '<br>' +
-      '<b>Discount:</b> Rs ' + (params.discountAmount || '') + '<br>' +
-      '<b>Net Total:</b> Rs ' + (params.totalAmount || '') + '</p>' +
-      '<p>The full invoice is attached as a PDF.</p>' +
-      '</div>';
+      '<div style="font-family:Georgia,Arial,sans-serif;max-width:560px;margin:0 auto;' +
+      'background:#fffdf8;border:1px solid #e6dcc4">' +
+      '<div style="background:#7a1420;padding:18px 20px;text-align:center;border-bottom:3px solid #c9a24d">' +
+      '<span style="color:#c9a24d;font-size:20px;font-weight:bold;letter-spacing:2px">NAMBI CRACKERS</span>' +
+      '</div>' +
+      '<div style="padding:22px 24px;color:#2a2222;font-size:14px;line-height:1.7">' +
+      '<p style="margin:0 0 14px">Thank you for your order enquiry.</p>' +
+      '<p style="margin:0 0 4px;color:#6e6664;font-size:13px">Order ID: <b style="color:#7a1420">' +
+      orderId + '</b></p>' +
+      '<p style="margin:0 0 16px;color:#6e6664;font-size:13px">Customer: <b style="color:#2a2222">' +
+      (params.name || '') + '</b></p>' +
+      '<p style="margin:0 0 12px">Your order enquiry has been received successfully. ' +
+      'Our team will contact you to confirm the order, packing and delivery.</p>' +
+      '<p style="margin:0 0 20px">Please refer to the attached PDF for complete order details.</p>' +
+      '<p style="margin:0;text-align:center;color:#7a1420;font-weight:bold">Thanking You!</p>' +
+      '<p style="margin:4px 0 0;text-align:center;color:#7a1420;letter-spacing:1.5px;font-weight:bold">' +
+      'NAMBI CRACKERS</p>' +
+      '</div></div>';
 
     var shopOk = send_(SHOP_EMAIL, 'New Order ' + orderId + ' - ' + (params.name || ''), html, attachments, result);
 
@@ -158,11 +184,12 @@ function sendInvoiceMails_(params, orderId, items) {
       custOk = send_(
         params.email,
         SHOP_NAME + ' - Order ' + orderId + ' received',
-        '<p>Thank you for your order with ' + SHOP_NAME + '.</p>' + html,
+        html,
         attachments,
         result
       );
     }
+
 
     result.sent = shopOk && custOk;
   } catch (mailErr) {
@@ -248,10 +275,18 @@ function getSheet_() {
   }
 
   var headerRow = sheet.getRange(1, 1, 1, Math.max(sheet.getLastColumn(), HEADERS.length));
-  if (String(headerRow.getValues()[0][HEADERS.length - 1] || '') !== 'Status') {
+  var hv = headerRow.getValues()[0];
+  if (String(hv[STATUS_COL - 1] || '') !== 'Status') {
+    sheet
+      .getRange(1, STATUS_COL)
+      .setValue('Status')
+      .setFontWeight('bold')
+      .setBackground('#f3e5c0');
+  }
+  if (String(hv[HEADERS.length - 1] || '') !== 'City') {
     sheet
       .getRange(1, HEADERS.length)
-      .setValue('Status')
+      .setValue('City')
       .setFontWeight('bold')
       .setBackground('#f3e5c0');
   }
@@ -302,7 +337,7 @@ function applyStatusValidation_(sheet, row) {
     .requireValueInList(STATUSES, true)
     .setAllowInvalid(false)
     .build();
-  sheet.getRange(row, HEADERS.length).setDataValidation(rule);
+  sheet.getRange(row, STATUS_COL).setDataValidation(rule);
 }
 
 function json_(obj) {

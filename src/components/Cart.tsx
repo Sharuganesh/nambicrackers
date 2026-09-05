@@ -33,6 +33,7 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const closedByBack = useRef(false);
+  const formRef = useRef<HTMLDivElement>(null);
 
   // Mobile hardware / gesture back closes the cart instead of leaving the site.
   useEffect(() => {
@@ -83,14 +84,14 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
   });
 
   const validate = () => {
-    if (!form.name.trim()) return "Please enter your name.";
-    if (!/^\d{10}$/.test(form.mobile.trim())) return "Please enter a valid 10 digit mobile number.";
-    if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) return "Please enter a valid email id.";
-    if (!form.address.trim()) return "Please enter your delivery address.";
-    if (!form.city.trim()) return "Please enter your city.";
-    if (!form.district.trim()) return "Please enter your district.";
-    if (!form.state.trim()) return "Please enter your state.";
-    if (!/^\d{6}$/.test(form.pincode.trim())) return "Please enter a valid 6 digit pincode.";
+    if (!form.name.trim()) return "Please fill the delivery details";
+    if (!/^\d{10}$/.test(form.mobile.trim())) return "Please fill the delivery details";
+    if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) return "Please fill the delivery details";
+    if (!form.address.trim()) return "Please fill the delivery details";
+    if (!form.city.trim()) return "Please fill the delivery details";
+    if (!form.district.trim()) return "Please fill the delivery details";
+    if (!form.state.trim()) return "Please fill the delivery details";
+    if (!/^\d{6}$/.test(form.pincode.trim())) return "Please fill the delivery details";
     if (belowMin) return `Minimum order value is Rs ${SHOP.minOrder}.`;
     return "";
   };
@@ -99,7 +100,11 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const v = validate();
-    if (v) return setError(v);
+    if (v) {
+      setError(v);
+      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
     setError("");
 
     const data = buildData();
@@ -217,7 +222,7 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
             ))}
           </div>
 
-          <div className="mt-5 space-y-3">
+          <div ref={formRef} className="mt-5 space-y-3">
             <h3 className="text-center text-lg font-bold">Submit your details</h3>
             <p className="text-center text-xs font-semibold text-muted-foreground">
               Minimum Order Value {SHOP.minOrder}

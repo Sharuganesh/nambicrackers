@@ -10,8 +10,8 @@ export function FloatingActions({
 }) {
   return (
     <>
-      {/* Left side: WhatsApp on top, Call below */}
-      <div className="fixed bottom-32 left-3 z-40 flex flex-col gap-2.5">
+      {/* Left side: WhatsApp on top, Call below — raised on mobile to avoid product rows */}
+      <div className="fixed top-36 left-4 z-40 flex flex-col gap-2.5 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
 
         <a
           href={`https://wa.me/91${SHOP.phone}`}
@@ -33,17 +33,17 @@ export function FloatingActions({
         </a>
       </div>
 
-      {/* Cart: floats above the bottom order bar on mobile, centered on desktop */}
+      {/* Cart: sits below the search bar on mobile, centered on desktop */}
       {onCart && (
         <button
           onClick={onCart}
           aria-label="Open cart"
-          className="btn-gold fixed bottom-36 right-3 z-40 flex h-13 w-13 items-center justify-center rounded-full p-3.5 shadow-xl sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2"
+          className="cart-pulse btn-gold fixed top-36 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full border-2 border-white p-3 shadow-2xl sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2"
         >
 
-          <ShoppingCart className="h-6 w-6" />
+          <ShoppingCart className="h-5 w-5" />
           {!!totalQty && totalQty > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-6 min-w-6 items-center justify-center rounded-full bg-primary px-1 text-xs font-bold text-primary-foreground">
+            <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
               {totalQty}
             </span>
           )}

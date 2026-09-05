@@ -116,6 +116,25 @@ function handleRequest(e) {
   }
 }
 
+/** Ensures a short unique NC-#### order id. */
+function uniqueOrderId_(sheet, requested) {
+  var existing = {};
+  var lastRow = sheet.getLastRow();
+  if (lastRow > 1) {
+    var ids = sheet.getRange(2, 2, lastRow - 1, 1).getValues();
+    for (var i = 0; i < ids.length; i++) existing[String(ids[i][0] || '')] = true;
+  }
+  var id = String(requested || '').trim();
+  if (!id || existing[id]) {
+    var guard = 0;
+    do {
+      id = 'NC-' + Math.floor(1000 + Math.random() * 9000);
+      guard++;
+    } while (existing[id] && guard < 200);
+  }
+  return id;
+}
+
 function sendInvoiceMails_(params, orderId, items) {
   var result = { sent: false, error: '', quota: -1 };
   try {

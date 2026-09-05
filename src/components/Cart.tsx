@@ -237,11 +237,6 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
             {field("Pincode", "pincode")}
           </div>
 
-          {error && (
-            <p className="mt-4 rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-              {error}
-            </p>
-          )}
         </div>
 
         {/* Sticky bottom summary + actions */}

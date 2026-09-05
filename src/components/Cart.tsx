@@ -272,7 +272,7 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
             {sending
               ? "Placing Order..."
               : belowMin
-                ? `Minimum Order Rs ${SHOP.minOrder}`
+                ? `Place order Min.${SHOP.minOrder}`
                 : "Place Order"}
           </button>
 

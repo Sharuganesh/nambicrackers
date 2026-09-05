@@ -4,6 +4,7 @@ import { CheckCircle2, Circle, Search, Truck, PackageCheck } from "lucide-react"
 import { APPS_SCRIPT_URL, SHOP } from "@/config";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { CrackerLoader } from "@/components/CrackerLoader";
 
 export const Route = createFileRoute("/track")({
   head: () => ({
@@ -101,6 +102,12 @@ function TrackPage() {
             {loading ? "Checking..." : "Track"}
           </button>
         </form>
+
+        {loading && (
+          <div className="mt-10 flex justify-center">
+            <CrackerLoader label="Fetching your order status..." />
+          </div>
+        )}
 
         {error && (
           <p className="mx-auto mt-4 max-w-lg rounded-md bg-destructive/10 px-3 py-2 text-center text-sm text-destructive">

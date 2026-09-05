@@ -152,30 +152,120 @@
   animation: cart-pulse 1.8s ease-in-out infinite;
 }
 
-@keyframes cart-blink {
-  0%,
+/* Gold cart button with a light-sheen sweep (overlay span keeps badge/ring visible) */
+.cart-shine {
+  background-image: var(--grad-gold);
+}
+
+.cart-sheen-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cart-sheen-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    oklch(1 0 0 / 0.7) 50%,
+    transparent 70%
+  );
+  transform: translateX(-130%);
+  animation: cart-sheen 2.4s ease-in-out infinite;
+}
+
+@keyframes cart-sheen {
+  55%,
   100% {
-    background-image: var(--grad-gold);
-    opacity: 1;
-    box-shadow: 0 0 0 0 oklch(0.78 0.13 82 / 0.7);
-  }
-  25% {
-    background-image: linear-gradient(100deg, oklch(0.36 0.15 20), oklch(0.5 0.15 25));
-    opacity: 0.95;
-  }
-  50% {
-    background-image: var(--grad-gold);
-    opacity: 0.85;
-    box-shadow: 0 0 0 12px oklch(0.78 0.13 82 / 0);
-  }
-  75% {
-    background-image: linear-gradient(100deg, oklch(0.55 0.18 140), oklch(0.4 0.15 145));
-    opacity: 0.95;
+    transform: translateX(130%);
   }
 }
 
-@utility cart-blink {
-  animation: cart-blink 2.2s ease-in-out infinite;
+/* Cracker (rocket) loading animation */
+@keyframes rocket-jitter {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-3deg);
+  }
+  25% {
+    transform: translateY(-3px) rotate(3deg);
+  }
+  50% {
+    transform: translateY(-1px) rotate(-2deg);
+  }
+  75% {
+    transform: translateY(-4px) rotate(2deg);
+  }
+}
+
+.cracker-rocket {
+  animation: rocket-jitter 0.55s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes spark-pop {
+  0% {
+    transform: translate(-50%, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(-50% + var(--sx, 0px)), var(--sy, 24px)) scale(0.2);
+    opacity: 0;
+  }
+}
+
+.cracker-spark {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--color-gold);
+  animation: spark-pop 0.85s ease-out infinite;
+}
+
+@keyframes fuse-glow {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}
+
+.cracker-fuse {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, oklch(0.95 0.1 90), var(--color-gold) 60%, transparent 75%);
+  transform: translateX(-50%);
+  animation: fuse-glow 0.4s ease-in-out infinite;
+}
+
+@keyframes cracker-text-pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.cracker-text {
+  animation: cracker-text-pulse 1.2s ease-in-out infinite;
 }
 
 @keyframes slide-in-right {

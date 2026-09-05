@@ -4,6 +4,7 @@ import { APPS_SCRIPT_URL, SHOP } from "@/config";
 import type { Product } from "@/data/products";
 import { invoiceBase64, makeOrderId, type InvoiceData } from "@/lib/invoice";
 import { QtyControl } from "./ProductTable";
+import { CrackerLoader } from "./CrackerLoader";
 
 export type CartLine = Product & { qty: number };
 
@@ -160,8 +161,13 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
     <div className="fixed inset-0 z-50 flex justify-end bg-ink/60 animate-in fade-in duration-200">
       <form
         onSubmit={submit}
-        className="slide-in-right flex h-full w-full max-w-md flex-col bg-background shadow-2xl"
+        className="slide-in-right relative flex h-full w-full max-w-md flex-col bg-background shadow-2xl"
       >
+        {sending && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/85">
+            <CrackerLoader label="Lighting up your order..." />
+          </div>
+        )}
         <div className="surface-royal flex items-center justify-between px-4 py-3">
           <h2 className="text-lg font-bold">Cart</h2>
           <button type="button" onClick={onClose} aria-label="Close cart">
@@ -283,7 +289,7 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
               disabled={sending || lines.length === 0}
               className="btn-gold hover:btn-gold-hover flex-1 px-4 py-3 text-sm disabled:opacity-50"
             >
-              {sending ? "Sending..." : "Place Order"}
+              {sending ? "Placing Order..." : "Place Order"}
             </button>
           </div>
         </div>

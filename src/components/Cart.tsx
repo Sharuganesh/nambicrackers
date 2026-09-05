@@ -100,7 +100,11 @@ export function Cart({ lines, setQty, clear, onClose, onDone }: Props) {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const v = validate();
-    if (v) return setError(v);
+    if (v) {
+      setError(v);
+      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
     setError("");
 
     const data = buildData();

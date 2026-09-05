@@ -79,7 +79,7 @@ function Index() {
         </div>
       </section>
 
-      <div className="sticky top-[64px] z-20 border-b border-border bg-background/95 px-3 py-2 backdrop-blur">
+      <div className="sticky top-[56px] z-20 border-b border-border bg-background/95 px-3 py-2 backdrop-blur">
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}

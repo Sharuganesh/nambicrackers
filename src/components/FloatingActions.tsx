@@ -11,7 +11,7 @@ export function FloatingActions({
   return (
     <>
       {/* Left side: WhatsApp on top, Call below — vertically centered like the reference */}
-      <div className="fixed left-3 top-[70%] z-40 flex flex-col gap-2.5 sm:top-1/2 sm:-translate-y-1/2">
+      <div className="fixed left-0 top-[62%] z-40 flex flex-col gap-2.5 pl-2">
 
         <a
           href={`https://wa.me/91${SHOP.phone}`}
@@ -38,7 +38,7 @@ export function FloatingActions({
         <button
           onClick={onCart}
           aria-label="Open cart"
-          className="cart-shine cart-pulse fixed right-0 top-[7.5rem] z-40 flex h-13 w-13 items-center justify-center rounded-l-2xl border-y-2 border-l-2 border-white p-3 pr-4 text-ink shadow-2xl sm:right-3 sm:top-1/2 sm:-translate-y-1/2 sm:rounded-full sm:border-2 sm:pr-3"
+          className="cart-shine cart-pulse fixed right-0 top-[7.5rem] z-40 flex h-13 w-13 items-center justify-center rounded-l-xl border-y-2 border-l-2 border-white p-3 pr-4 text-ink shadow-2xl"
         >
           <span className="cart-sheen-overlay" aria-hidden="true" />
           <ShoppingCart className="h-5 w-5 drop-shadow-sm" />

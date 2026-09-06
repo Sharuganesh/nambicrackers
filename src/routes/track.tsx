@@ -82,7 +82,7 @@ function TrackPage() {
           Track Your Order
         </h1>
         <p className="mt-2 text-center text-sm text-muted-foreground">
-          Enter the order ID from your invoice (example ORD-260904-1234) or the mobile
+          Enter the order ID from your invoice (example NC-1234) or the mobile
           number you ordered with.
         </p>
 
